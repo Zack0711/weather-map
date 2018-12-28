@@ -1,0 +1,23 @@
+.f-weight-light{ font-weight: $font-weight-light !important; }
+.f-weight-medium{ font-weight: $font-weight-medium !important; }
+.f-weight-regular{ font-weight: $font-weight-regular !important; }
+
+.bg-color-white{ background-color: $color-white !important; }
+.bg-color-grey-100{ background-color: $color-grey-100 !important; }
+.bg-color-grey-200{ background-color: $color-grey-200 !important; }
+.bg-color-grey-300{ background-color: $color-grey-300 !important; }
+.bg-color-grey-400{ background-color: $color-grey-400 !important; }
+.bg-color-grey-500{ background-color: $color-grey-500 !important; }
+
+.bg-color-green{ background-color: $color-green !important; }
+.bg-color-green-light{ background-color: $color-green-light !important; }
+.bg-color-green-dark{ background-color: $color-green-dark !important; }
+.bg-color-orange{ background-color: $color-orange !important; }
+
+.txt-primary{ color: $color-grey-500 !important; }
+.txt-secondary{ color: $color-grey-400 !important; }
+
+.dark-theme{
+  .txt-primary{ color: $color-white !important; }
+  .txt-secondary{ color: $color-white !important; }
+}

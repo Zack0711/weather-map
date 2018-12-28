@@ -1,9 +1,42 @@
-// Font
-$font-base-size: 10px;
+@import url('https://fonts.googleapis.com/css?family=Montserrat:300,300i,400,400i,500,500i|Noto+Sans+TC:300,400,500');
 
-// Color
 $color-white: #fff;
+$color-grey-100: #f4f4f4;
+$color-grey-200: #efefef;
+$color-grey-300: #d2d2d2;
+$color-grey-400: #9b9b9b;
+$color-grey-500: #4a4a4a;
 
-// Alpha
+$color-green: #4bd6b8;
+$color-green-light: #a0d4c8;
+$color-green-dark: #3bccad;
 
-// Images path
+$color-orange: #ff996e;
+
+$font-basic-family: 'Montserrat', 'Noto Sans TC', sans-serif;
+
+$font-basic-size: 15px;
+$font-basic-t-size: 14px;
+
+$line-height-basic: 1.5;
+
+$font-size-1: 40px;
+$font-size-2: 30px;
+$font-size-3: 24px;
+$font-size-4: 18px;
+$font-size-5: $font-basic-size;
+$font-size-6: 12px;
+
+$font-size-t-1: 34px;
+$font-size-t-2: 24px;
+$font-size-t-3: 18px;
+$font-size-t-4: 16px;
+$font-size-t-5: $font-basic-t-size;
+$font-size-t-6: $font-size-6;
+
+$font-weight-light: 300;
+$font-weight-regular: 400;
+$font-weight-medium: 500;
+
+$font-primary-color: $color-grey-500;
+$font-secondary-color: $color-grey-400;
