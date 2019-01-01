@@ -2,7 +2,9 @@ const webpack = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 
-const extractSass = new ExtractTextPlugin('style.css')
+const extractCSS = new ExtractTextPlugin('other-styles.css')
+const extractLess = new ExtractTextPlugin('original-styles.css')
+const extractSass = new ExtractTextPlugin('new-styles.css')
 
 const pageTemplate = process.env.page || 'index'
 const htmlTemplate = new HtmlWebpackPlugin({ 
@@ -28,6 +30,11 @@ module.exports = {
         default: {
           priority: -20,
           reuseExistingChunk: true,
+        },
+        search: {
+          name: 'react-instantsearch',
+          reuseExistingChunk: true,
+          test: /react-instantsearch/,
         },
         vendors: {
           name: 'vendor',
@@ -56,7 +63,7 @@ module.exports = {
         loader: 'babel-loader',
         exclude: /node_modules/,
         query: {
-            presets: ['env']
+          presets: ['es2015', 'react']
         }
       },
       {
@@ -71,6 +78,27 @@ module.exports = {
         })
       },
       {
+        test: /\.less$/,
+        use: extractLess.extract({
+          fallback: 'style-loader',
+          use: [
+            'css-loader',
+            { loader: 'postcss-loader', options: { path: 'postcss.config.json' } },
+            'less-loader'
+          ]
+        })
+      },
+      {
+        test: /\.css$/,
+        use: extractCSS.extract({
+          fallback: 'style-loader',
+          use: [
+            { loader: 'css-loader', options: { importLoaders: 1 } },
+            { loader: 'postcss-loader', options: { path: 'postcss.config.json' } }
+          ]
+        })
+      },
+      {
         test: /\.(gif|png|jpe?g)$/i,
         loaders: [
           {
@@ -81,7 +109,7 @@ module.exports = {
           },
           {
             loader: 'image-webpack-loader',
-            options: {
+            query: {
               mozjpeg: {
                 progressive: true,
               },
@@ -101,23 +129,16 @@ module.exports = {
       },
       {
         test: /\.(eot|svg|ttf|woff|woff2)$/,
-        loader: 'file-loader',
-        options: {
-          name: 'public/[name].[ext]'
-        }
+        loader: 'file-loader?name=public/fonts/[name].[ext]'
       },
-      { 
-        test: /\.html$/, 
-        loader: 'html-loader',
-        options: {
-          name: '[name].[ext]'
-        }
-      }        
+      { test: /\.html$/, loader: 'html-loader' }        
     ]
   },
   devtool: 'source-map',
   plugins: [
     htmlTemplate,
+    extractCSS,
+    extractLess,
     extractSass,
   ]
 }

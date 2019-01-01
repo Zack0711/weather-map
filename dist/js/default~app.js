@@ -1,0 +1,1 @@
+(window.webpackJsonp=window.webpackJsonp||[]).push([[1],[function(e,t,c){"use strict";c(1);var o,u;document.querySelector(".form-stay-updated")&&(o=document.querySelector(".form-stay-updated .form-check input[type=checkbox]"),u=document.querySelector(".form-stay-updated input[type=submit]"),o.onclick=function(e){u.disabled=!o.checked})},function(e,t){}]]);

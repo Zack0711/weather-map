@@ -3,6 +3,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 
 const extractSass = new ExtractTextPlugin('style.css')
+
 const indexTemplate = new HtmlWebpackPlugin({ 
   template: `template/index.ejs`,
 })
@@ -53,7 +54,7 @@ module.exports = {
         loader: 'babel-loader',
         exclude: /node_modules/,
         query: {
-            presets: ['env']
+            presets: ['es2015', 'react']
         }
       },
       {
@@ -62,7 +63,6 @@ module.exports = {
           fallback: 'style-loader',
           use: [
             'css-loader',
-            { loader: 'postcss-loader', options: { path: 'postcss.config.json' } },
             'sass-loader'
           ]
         })
@@ -98,18 +98,9 @@ module.exports = {
       },
       {
         test: /\.(eot|svg|ttf|woff|woff2)$/,
-        loader: 'file-loader',
-        options: {
-          name: 'public/[name].[ext]'
-        }
+        loader: 'file-loader?name=public/fonts/[name].[ext]'
       },
-      { 
-        test: /\.html$/, 
-        loader: 'html-loader',
-        options: {
-          name: '[name].[ext]'
-        }
-      }
+      { test: /\.html$/, loader: 'html-loader' }
     ]
   },
   plugins: [
