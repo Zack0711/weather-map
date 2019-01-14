@@ -1,0 +1,33 @@
+.container{
+  padding-right: 20px;
+  padding-left: 20px;
+}
+
+.container-fluid{
+  padding-right: 20px;
+  padding-left: 20px;
+}
+
+@include media-breakpoint-up(sm){
+  .container{
+    width: 94%;
+    padding-right: 15px;
+    padding-left: 15px;
+  }
+}
+
+@include media-breakpoint-up(md){
+  .container{
+  }
+}
+
+@include media-breakpoint-up(lg){
+  .container{
+    width: 100%;
+  }
+
+  .container-fluid{
+    padding-right: 40px;
+    padding-left: 40px;
+  }
+}

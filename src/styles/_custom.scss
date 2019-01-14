@@ -1,2 +1,28 @@
 $spacer: 10px;
 $paragraph-margin-bottom: 10px;
+$font-size-base: 10px;
+
+$container-max-widths: (
+  sm: 100%,
+  md: 100%,
+  lg: 960px,
+  xl: 1140px
+);
+
+$nav-link-padding-y: 5px;
+$nav-link-padding-x: 10px;
+
+$input-btn-padding-y: 3.75px;
+$input-btn-padding-x: 7.5px;
+
+$input-btn-padding-y-sm: 2.5px;
+$input-btn-padding-x-sm: 5px;
+
+$input-btn-padding-y-lg: 5px;
+$input-btn-padding-x-lg: 10px;
+
+$custom-control-indicator-size: 10px;
+
+$alert-padding-y: 7.5px;
+$alert-padding-x: 12.5px;
+$alert-margin-bottom: 10px;

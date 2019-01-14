@@ -1,0 +1,401 @@
+.header{
+  @include font-style-5(1);
+
+  color: $color-primary;
+  background-color: rgba(255, 255, 255, 0.95);
+  height: 54px;
+
+  a{
+    line-height: 1;
+
+    &:link,
+    &:hover,
+    &:active,
+    &:visited{
+      color: $color-primary;
+    }
+  }
+
+  .container{
+    position: relative;
+  }
+
+  .tool-menu{
+    display: flex;
+    align-items: center;
+  }
+
+  .index-link{
+    height: 54px;
+    padding: 15px 0;
+    margin-right: 30px; 
+
+    .brand-img{
+      display: block;
+      width: 50px;
+      height: 24px;
+      background-image: url($htc-logo);
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+  }
+
+  .vive-link{
+    height: 54px;
+    padding: 15px 0;
+    margin-left: 30px;
+
+    &:hover{
+      .brand-img{
+        background-image: url($vive-logo-color);
+      }
+    }
+
+    .brand-img{
+      display: block;
+      width: 68px;
+      height: 24px;
+      background-image: url($vive-logo);
+      background-repeat: no-repeat;
+      background-size: 67px 17px;
+      background-position: center;
+    }
+  }
+}
+
+.header-menu{
+  flex-grow: 1;
+
+  &:hover{
+    .indicator{
+      opacity: 1;
+    }
+  }
+
+  .indicator{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 1px;
+    height: 3px;
+    background-color: $color-green; 
+    opacity: 0;
+
+    transition: transform .5s, opacity .5s;
+  }
+}
+
+.header-menu__item{
+  padding: 0 30px;
+
+  &:hover{
+    .header-submenu__item{
+      transform: translate(0, 0);
+    }
+
+    .header-submenu:before{
+      height: 100%;
+    }
+  }
+
+  &.show{
+    .header-submenu{
+      z-index: 10;
+      transform: translate(0, 0);      
+    }
+  }
+
+  >.nav-link{
+    padding: 19px 0 20px;
+  }
+
+  >.vive-link{
+    display: none;
+  }
+}
+
+.header-submenu{
+  position: absolute;
+  width: 100%;
+  top: 54px;
+  left: 0px;
+  z-index: -1;
+  transform: translate(0, -100%);
+
+  &:before{
+    content: '';
+    display: block;
+    position: absolute;
+    left: calc(50% - 50vw);
+    width: 100vw;
+    height: 0;
+    background-color: rgba(255, 255, 255, 0.9);
+    z-index: -1;
+
+    transition: height 0.5s;
+  }
+
+  >ul{
+    display: flex;
+    list-style: none;
+    width: 100%;
+    overflow: hidden;
+    padding: 0;
+  }
+}
+
+.header-submenu__item{
+  margin: 0 30px;
+  min-width: 95px;
+  opacity: 0.7;
+  transform: translate(0, -100%);
+
+  transition: transform 0.5s;
+
+  &:hover{
+    opacity: 1;
+
+    img{
+      transform: scale(1.1);
+      transition: transform 0.3s;
+    }
+  }
+
+  &.img-link{
+    text-align: center;
+  }
+
+  figure{
+    margin-bottom: 10px;
+  }
+
+  img{
+    width: 50px;
+    height: 50px;
+  }
+
+  .nav-link{
+    padding: 20px 0;
+  }
+}
+
+.menu-toggle-btn{
+  display: none;
+  width: 25px;
+  height: 25px;
+  position: relative;
+
+  .icon-toggle{
+    width: 12px;
+    height: 2px;
+    display: block;
+    position: absolute;
+    top: calc(50% - 1px);
+    left: calc(50% - 6px);
+    background-color: $color-primary;
+
+    &:before,
+    &:after{
+      content: '';
+      width: 100%;
+      height: 2px;
+      display: block;
+      position: absolute;
+      margin: 0;
+      top: 0;
+      left: 0;
+      background-color: $color-primary;
+      transition: transform .3s;
+    }
+
+    &:before{ transform: translate(0, -4px) rotate(0);}
+    &:after{ transform: translate(0, 4px) rotate(0);}
+  }  
+}
+
+.tool-menu{
+  .tool-item{
+    padding: 0 10px; 
+  }
+}
+
+
+@include media-breakpoint-down(md) {
+
+  .header{
+    font-size: $font-size-t-5;
+    height: 48px;
+    transition: background-color .3s;
+    overflow: hidden;
+
+    .menu-toggle-btn{
+      display: block;
+    }
+
+    .index-link{
+      flex-grow: 1;
+      height: 48px;
+      padding: 12px 0 12px 55px;
+      margin: 0;
+
+      .brand-img{
+        margin: 0 auto;
+      }
+    }
+  }
+
+  .tool-menu{
+    .shopping-bag{
+      padding-right: 0;
+    }
+
+    >.vive-link{
+      display: none;
+    }
+  }
+
+  .menu-mode{
+    overflow: hidden;
+
+    .header{
+      background-color: $color-white;
+      position: fixed;
+      width: 100vw;
+      height: 100vh;
+      z-index: 100;
+
+      .index-link{
+        padding-right: 25px;
+        padding-left: 0;
+      }
+
+      .menu-toggle-btn{
+        .icon-toggle{
+          background-color: transparent;
+          &:before{ transform: translate(0, 0) rotate(45deg);}
+          &:after{ transform: translate(0, 0) rotate(-45deg);}          
+        }
+      }
+
+      .header-menu{
+        height: calc(100vh - 48px);
+        overflow-y:auto;
+      }
+
+      .tool-item{
+        display: none;
+      }
+    }
+  }
+
+  .account-info{
+    display: none;
+  }
+
+  .header-menu{
+    position: absolute;
+    padding: 0 15px;
+    left: 0;
+    top: 48px;
+    width: 100%;
+    height: 0;
+    z-index: 10;
+    display: block;
+    overflow: hidden;
+
+    transition: height .5s;
+
+    .nav-link{
+      line-height: 1.5;      
+    }
+
+    .indicator{
+      display: none;
+    }
+  }
+
+  .header-menu__item{
+    width: 100%;
+    padding: 0;
+    position: relative;
+    border-bottom: 1px solid $color-grey-200;
+
+    >.nav-link{
+      padding: 9px 0 10px;
+    }
+
+    >.vive-link{
+      display: block;
+      height: 40px;
+      padding: 8px 0;
+      margin: 0;
+    }
+
+    &.header-menu__item--contain-submenu{
+      >.nav-link{
+        padding-right: 25px;
+      }
+
+      >.toggle-btn{
+        cursor: pointer;
+        position: absolute;
+        right: 0px;
+        top: 7px;
+
+        .icon-arrow-toggle:before { content: '\e801'; }
+      }
+    }
+
+    &.open{
+      .header-submenu{
+        padding: 2px 0 8px;
+        max-height: initial;
+      }
+
+      >.toggle-btn{
+        .icon-arrow-toggle:before { content: '\e804'; }
+      }
+    }
+  }
+
+  .header-submenu{
+    position: relative;
+    width: 100%;
+    top: 0;
+    z-index: 1;
+    transform: translate(0, 0);
+    padding: 0;
+    max-height: 0;
+    overflow: hidden;
+
+    transition: max-height .5s, padding .5s;
+
+    &:before{
+      display: none;
+    }
+
+    >ul{
+      flex-wrap: wrap;
+    }
+  }
+
+  .header-submenu__item{
+    margin: 0;
+    padding: 0 12px;
+    transform: translate(0, 0);
+    min-width: 100%;
+
+    &.img-link{
+      text-align: left;
+    }
+
+    >.nav-link{
+      padding: 8px 0;
+
+      figure{
+        display: none;
+      }
+    }
+  }
+
+}

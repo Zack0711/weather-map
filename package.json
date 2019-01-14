@@ -6,7 +6,11 @@
   "author": "Zack <zack_lai@htc.com>",
   "scripts": {
     "build": "webpack --env=prod -p",
-    "start": "webpack-dev-server --env=dev --content-base --inline"
+    "start": "webpack-dev-server --env=dev",
+    "buildTest": "npm run build --  --scope=test && npm run build --  --scope=vive"
+  },
+  "config": {
+    "app": "vive"
   },
   "devDependencies": {
     "babel": "^6.5.2",
