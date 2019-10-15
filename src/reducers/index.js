@@ -1,13 +1,9 @@
 import { combineReducers } from 'redux';
 
-import messages from './messagesReducer';
-import user from './userReducer';
-import usersList from './usersListReducer';
-import chatRoom from './chatRoomReducer'
-import posts from './postsReducer'
+import chart from './chart'
 
 const rootReducer = combineReducers({
-  posts,
+  chart,
 })
 
 export default rootReducer;

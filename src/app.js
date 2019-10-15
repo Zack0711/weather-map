@@ -1,9 +1,5 @@
-import React from 'react';
-
-import SolarEclipseBlog from './solarEclipseBlog.jsx'
-import {
-  getAllPosts,
-} from './actionCreators/posts'
+import React from 'react'
+import GalaxySpectrum from './pages/galaxy-spectrum.jsx'
 
 class App extends React.Component {
   constructor(props) {
@@ -13,10 +9,10 @@ class App extends React.Component {
   render() {
     return (
       <div className="container h-100">
-        <SolarEclipseBlog />
+        <GalaxySpectrum />
       </div>
     )
-  }  
+  }
 }
 
 export default App
