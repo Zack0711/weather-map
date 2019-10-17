@@ -1,38 +1,47 @@
-import "@babel/polyfill";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
+import "@babel/polyfill"
+import "slick-carousel/slick/slick.css"
+import "slick-carousel/slick/slick-theme.css"
 
-import '../styles/main.scss';
+import '../styles/main.scss'
 
-import React from 'react';
-import { Provider } from 'react-redux';
-import { I18nextProvider } from 'react-i18next';
+import React, { useState, useEffect } from 'react'
+import { Provider } from 'react-redux'
 
-import ChartWrapper from '../containers/chart-wrapper';
+import Slider from '@material-ui/core/Slider'
+import Typography from '@material-ui/core/Typography'
+import Tooltip from '@material-ui/core/Tooltip'
+
+import ChartWrapper from '../containers/chart-wrapper'
 import Chart from '../containers/chart'
 
-import store from '../store';
-import i18n from '../i18n';
+import store from '../store'
+import i18n from '../i18n'
 
-const baseUrl = './csv_data/'
-const csv = 'csvSpectrum_1237648720693690487.csv'
+const DEFAULT_TEMPERATURE = 1200
 
-class GalaxySpectrum extends React.Component {
-  constructor(props) {
-    super(props);
+const GalaxySpectrum = () => {
+
+  const [temperature, setTemperature] = React.useState(DEFAULT_TEMPERATURE)
+
+  const handleSliderChange = (e, val) => {
+    setTemperature(val)
   }
 
-  render() {
-    return (
-      <Provider store={store}>
-        <I18nextProvider i18n={i18n}>
-          <ChartWrapper>
-            <Chart/>
-          </ChartWrapper>
-        </I18nextProvider>
-      </Provider>
-    )
-  }  
+  return(
+    <Provider store={store}>
+      <ChartWrapper>
+        <Chart/>
+        <Typography gutterBottom>{temperature}</Typography>
+        <Slider
+          defaultValue={DEFAULT_TEMPERATURE}
+          max={5000}
+          valueLabelDisplay ='on'
+          onChange={handleSliderChange}
+        />
+
+      </ChartWrapper>
+    </Provider>
+  )
 }
 
 export default GalaxySpectrum
