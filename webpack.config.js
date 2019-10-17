@@ -39,7 +39,7 @@ module.exports = (env, argv) => {
   } = Object.assign(defaultSetting, argv);
 
   const htmlTemplate = new HtmlWebpackPlugin({
-    title: 'Algorithm Animation',
+    title: '光譜學習軟體',
     template: `template/${page}.ejs`,
   })
 

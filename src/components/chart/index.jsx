@@ -1,59 +1,83 @@
 import React from 'react';
 
-import SpectrumChart from './spectrum-chart.js' 
+import { makeStyles } from '@material-ui/core/styles'
 
-class Chart extends React.Component {
-  constructor(props){
-    super(props);
-    this.spectrumRef = React.createRef();
-    this.spectrumChart = null
-  }  
+import {
+  LineChart,
+  CartesianGrid,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Legend,
+  Line,
+  ResponsiveContainer,
+} from 'recharts'
 
-  componentDidMount() {
-    console.log(this.spectrumRef.current)
-    this.spectrumChart = new SpectrumChart(this.spectrumRef.current)
-  }
+const useStyles = makeStyles(theme => ({
+  chart: {
+    height: '480px',
+  },
+}))
 
-  componentDidUpdate(prevProps) {
-    // Typical usage (don't forget to compare props):
-    if (this.props.spectrumData !== prevProps.spectrumData) {
+const Chart = props => {
+  const {
+    spectrumData,
+    planckData,
+    t,
+  } = props;
 
-      const { spectrumData } = this.props
+  const classes = useStyles()
 
-      const galaxyData =[];
-      const dataKey = 'BestFit';
-      // const dataKey = chartMode === 0 ? 'Flux' : 'BestFit';
-      //const dataCorrection = needCorrect ? csvDataSet[dataSelector.value].correct || 1 : 1;
-
-      spectrumData.data.forEach((d,i) => {
-        if( i % 3 === 0){
-          galaxyData.push({energyDensity: parseInt(d[dataKey]), waveLength: parseInt(d.Wavelength)*Math.pow(10, -10)});
-        }
-      })
-
-      console.log(galaxyData, galaxyData.length)
-      console.log(this.props.spectrumData)
-
-      if(galaxyData.length > 0){
-        this.spectrumChart.updateGalaxyChart(galaxyData)
-        this.spectrumChart.setAxisReference('galaxy')
-        this.spectrumChart.chartRender()        
-      }
+  return (
+    <div className={classes.chart}>
+    {
+      spectrumData && (
+        <ResponsiveContainer width="100%" height={480}>
+          <LineChart>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis 
+              dataKey="Wavelength"
+              type="number"
+              allowDecimals={false}
+              domain={[0, 'auto']}
+            />
+            <YAxis 
+              yAxisId="left"
+              type="number"
+              tick={false}
+              domain={[0, 'dataMax']}
+              label={{ value: 'Energy Density', angle: -90}}
+              allowDataOverflow={true}
+            />
+            <YAxis 
+              hide={true}
+              domain={[0, 'dataMax']}
+              yAxisId="right" 
+            />
+            <Line 
+              yAxisId="left" 
+              type="monotone" 
+              data={spectrumData.data} 
+              dataKey="BestFit" 
+              dot={false} 
+              isAnimationActive={false}
+            />
+            <Line 
+              yAxisId="right" 
+              type="monotone" 
+              data={planckData} 
+              dataKey="energyDensity" 
+              dot={false} 
+              activeDot={false}
+              isAnimationActive={false}
+              stroke="#82ca9d"
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      )
     }
-  }
-
-  render() {
-    const {
-      spectrumData,
-      t,
-    } = this.props;
-
-    return(
-      <div className="chart">
-        <svg className="spectrum" ref={this.spectrumRef} width="1000px" height="640px"></svg>
-      </div>
-    )
-  }
+    </div>
+  )
 }
 
 export default Chart;
