@@ -4,14 +4,40 @@ import Promise from 'promise-polyfill'
 // To add to window
 if (!window.Promise) window.Promise = Promise
 
+const apiRoot = 'http://localhost:8080'
+
 const serverApi = {
+  getSpectrumData: {
+    method: 'GET',
+    url: config => `${apiRoot}/spectrum/summary/${config.id}`,
+    headers: {
+      'Content-Type': 'application/json',
+      mode: 'cors',
+    },
+  },
+  getSpectrum: {
+    method: 'GET',
+    url: config => `${apiRoot}/spectrum/${config.id}`,
+    headers: {
+      'Content-Type': 'application/json',
+      mode: 'cors',
+    },
+  },
+  getAllSpectrums: {
+    method: 'GET',
+    url: config => `${apiRoot}/spectrum/`,
+    headers: {
+      'Content-Type': 'application/json',
+      mode: 'cors',
+    },
+  },
   getAllPost: {
     method: 'GET',
     url: config => `http://140.122.146.39/wordpress/index.php/wp-json/wp/v2/posts`,
     headers: {
       'Content-Type': 'application/json',
-    }    
-  }
+    },
+  },
 }
 
 /* eslint class-methods-use-this: ["error", { "exceptMethods": ["sendRequest"] }] */

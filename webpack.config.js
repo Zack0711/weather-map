@@ -22,7 +22,7 @@ const optimization = {
 
 const devServer = {
   inline: true,
-  https: false,
+  https: true,
   open: true,
   host: "0.0.0.0",
   port: 3030,
