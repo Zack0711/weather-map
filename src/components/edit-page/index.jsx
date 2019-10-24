@@ -10,6 +10,9 @@ import { makeStyles } from '@material-ui/core/styles'
 
 import Paper from '@material-ui/core/Paper'
 
+import IconButton from '@material-ui/core/IconButton'
+import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos'
+
 import {
   fetchEditedSpectrumData, 
 } from '../../actions'
@@ -45,10 +48,18 @@ const EditPage = () => {
     dispatch(fetchEditedSpectrumData(id))
   }, [id])
 
+  const handleClick = id => () => {
+    history.push(`/list/${id}`)
+  }
+
   console.log(spectrumData)
 
   return(
     <Paper className={classes.paper}>
+      <IconButton edge="end" aria-label="delete" onClick={() => history.push(`/list`) }>
+        <ArrowBackIosIcon />
+      </IconButton>
+
       Spectrum: {id}
     </Paper>
   )

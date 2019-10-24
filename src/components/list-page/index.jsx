@@ -19,13 +19,11 @@ import ListItemIcon from '@material-ui/core/ListItemIcon'
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
 import ListItemText from '@material-ui/core/ListItemText'
 import Avatar from '@material-ui/core/Avatar'
-import IconButton from '@material-ui/core/IconButton'
 import Typography from '@material-ui/core/Typography'
 
+import IconButton from '@material-ui/core/IconButton'
 import DescriptionIcon from '@material-ui/icons/Description'
-import FolderIcon from '@material-ui/icons/Folder'
 import DeleteIcon from '@material-ui/icons/Delete'
-import EditIcon from '@material-ui/icons/Edit'
 
 import {
   getList,
@@ -68,7 +66,7 @@ const ListPage = () => {
       <List>
         {
           list.map( d => (
-            <ListItem key={d.id}>
+            <ListItem key={d.id} onClick={handleClick(d.id)} button>
               <ListItemAvatar>
                 <Avatar>
                   <DescriptionIcon />
@@ -78,9 +76,6 @@ const ListPage = () => {
                 primary={d.id}
               />
               <ListItemSecondaryAction>
-                <IconButton edge="end" aria-label="edit" onClick={handleClick(d.id)}>
-                  <EditIcon />
-                </IconButton>
                 <IconButton edge="end" aria-label="delete">
                   <DeleteIcon />
                 </IconButton>
