@@ -20,7 +20,10 @@ import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
 import ListItemText from '@material-ui/core/ListItemText'
 import Avatar from '@material-ui/core/Avatar'
 import Typography from '@material-ui/core/Typography'
+import TextField from '@material-ui/core/TextField'
 
+import Fab from '@material-ui/core/Fab'
+import AddIcon from '@material-ui/icons/Add'
 import IconButton from '@material-ui/core/IconButton'
 import DescriptionIcon from '@material-ui/icons/Description'
 import DeleteIcon from '@material-ui/icons/Delete'
@@ -33,9 +36,13 @@ import {
   fetchSpectrumList, 
 } from '../../actions'
 
+import httpService from '../../services/httpService'
+
+import FormDialog from '../form-dialog/index.jsx'
+
 const useStyles = makeStyles(theme => ({
   paper:{
-    marginBottom: theme.spacing(4),
+    position: 'relative',
     paddingTop: theme.spacing(4),
     paddingBottom: theme.spacing(4),
     paddingLeft: theme.spacing(2),
@@ -43,8 +50,37 @@ const useStyles = makeStyles(theme => ({
   },
   button: {
     margin: theme.spacing(1),
-  },  
+  },
+  fab: {
+    position: 'absolute',
+    top: theme.spacing(4),
+    right: theme.spacing(4),
+  },
+  form: {
+    minWidth: '360px'
+  }
 }))
+
+const AddSpectrumForm = ({className, value, handleChange, error}) => (
+  <form noValidate autoComplete="off" className={className}>
+    <TextField
+      value={value}
+      error={error.isError}
+      id="standard-full-width"
+      label="ID"
+      style={{ margin: 8 }}
+      onChange={handleChange}
+      helperText={error.message}
+      fullWidth
+      margin="normal"
+    />
+  </form>
+)
+
+const defaultError = {
+  isError: false,
+  message: '',
+}
 
 const ListPage = () => {
   const dispatch = useDispatch()
@@ -53,20 +89,69 @@ const ListPage = () => {
 
   const list = useSelector(getList)
 
+  const [isFormOpen, setFormOpen] = React.useState(false)
+  const [isDeleteDialogOpen, setDeleteDialogOpen] = React.useState(false)
+  const [error, setError] = React.useState(defaultError)
+
+  const [addID, setAddID] = React.useState('')
+  const [deleteID, setDeleteID] = React.useState('')
+
   useEffect(() => {
     dispatch(fetchSpectrumList)
   }, [])
 
-  const handleClick = id => () => {
+  const handleChange = event => {
+    setAddID(event.target.value)
+  }
+
+  const onFormClose = () => { setFormOpen(false) }
+  const onAddConfirm = async () => { 
+    if(addID){
+      const rsp = await httpService.sendRequest('addSpectrum', { data: {id: addID} })
+      if(rsp.message){
+        setError({
+          isError: true,
+          message: rsp.message
+        })
+      }else{
+        setAddID('')
+        onFormClose()
+        history.push(`/list/${addID}`)
+      }
+    }
+  }
+
+  const onDeleteDialogClose = () => { setDeleteDialogOpen(false) }  
+  const onDeleteConfirm = async () => { 
+    const rsp = await httpService.sendRequest('deleteSpectrum', { id: deleteID })
+    setDeleteID('')
+    setDeleteDialogOpen(false)
+    dispatch(fetchSpectrumList)
+  }
+
+  const handleAddBTNClick = () => { setFormOpen(true) }
+
+  const handleListClick = id => () => {
     history.push(`/list/${id}`)
+  }
+
+  const handleDeleteClick = id => () => { 
+    setDeleteID(id)
+    setDeleteDialogOpen(true)
   }
 
   return(
     <Paper className={classes.paper}>
+      <Fab className={classes.fab} onClick={handleAddBTNClick} aria-label="Add" color="primary" size="small">
+        <AddIcon />
+      </Fab>
+      <Typography variant="h4" align="center" gutterBottom>
+        光譜資料列表
+      </Typography>
       <List>
         {
           list.map( d => (
-            <ListItem key={d.id} onClick={handleClick(d.id)} button>
+            <ListItem key={d.id} onClick={handleListClick(d.id)} button>
               <ListItemAvatar>
                 <Avatar>
                   <DescriptionIcon />
@@ -76,14 +161,33 @@ const ListPage = () => {
                 primary={d.id}
               />
               <ListItemSecondaryAction>
-                <IconButton edge="end" aria-label="delete">
+                <IconButton edge="end" aria-label="delete" onClick={handleDeleteClick(d.id)}>
                   <DeleteIcon />
                 </IconButton>
               </ListItemSecondaryAction>
             </ListItem>
           ))
         }
-      </List>    
+      </List>
+      <FormDialog 
+        title={'新增資料'}
+        children={<AddSpectrumForm 
+          error={error}
+          className={classes.form}
+          value={addID} 
+          handleChange={handleChange} 
+        />}
+        open={isFormOpen} 
+        onClose={onFormClose}  
+        onConfirm={onAddConfirm}
+      />
+      <FormDialog 
+        title={'確定刪除這筆資料？'}
+        children={deleteID}
+        open={isDeleteDialogOpen} 
+        onClose={onDeleteDialogClose}  
+        onConfirm={onDeleteConfirm}
+      />
     </Paper>
   )
 }

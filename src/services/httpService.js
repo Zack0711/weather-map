@@ -23,6 +23,22 @@ const serverApi = {
       mode: 'cors',
     },
   },
+  addSpectrum: {
+    method: 'POST',
+    url: config => `${apiRoot}/spectrum/`,
+    headers: {
+      'Content-Type': 'application/json',
+      mode: 'cors',
+    },
+  },
+  deleteSpectrum: {
+    method: 'DELETE',
+    url: config => `${apiRoot}/spectrum/${config.id}`,
+    headers: {
+      'Content-Type': 'application/json',
+      mode: 'cors',
+    },
+  },
   getAllSpectrums: {
     method: 'GET',
     url: config => `${apiRoot}/spectrum/`,
@@ -53,6 +69,7 @@ class HttpService {
 
     switch(requestOption.method) {
       case 'POST':
+        console.log(config)
         if(config.data) requestOption.body = JSON.stringify(config.data);
         break;
       case 'GET':
