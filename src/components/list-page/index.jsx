@@ -20,7 +20,6 @@ import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
 import ListItemText from '@material-ui/core/ListItemText'
 import Avatar from '@material-ui/core/Avatar'
 import Typography from '@material-ui/core/Typography'
-import TextField from '@material-ui/core/TextField'
 
 import Fab from '@material-ui/core/Fab'
 import AddIcon from '@material-ui/icons/Add'
@@ -29,6 +28,7 @@ import DescriptionIcon from '@material-ui/icons/Description'
 import DeleteIcon from '@material-ui/icons/Delete'
 
 import {
+  getIsFetching,
   getList,
 } from '../../selectors/spectrum'
 
@@ -39,6 +39,8 @@ import {
 import httpService from '../../services/httpService'
 
 import FormDialog from '../form-dialog/index.jsx'
+
+import Progress from '../progress/index.jsx'
 
 const useStyles = makeStyles(theme => ({
   paper:{
@@ -88,6 +90,7 @@ const ListPage = () => {
   const history = useHistory()
 
   const list = useSelector(getList)
+  const isFetching = useSelector(getIsFetching)
 
   const [isFormOpen, setFormOpen] = React.useState(false)
   const [isDeleteDialogOpen, setDeleteDialogOpen] = React.useState(false)
@@ -142,7 +145,16 @@ const ListPage = () => {
 
   return(
     <Paper className={classes.paper}>
-      <Fab className={classes.fab} onClick={handleAddBTNClick} aria-label="Add" color="primary" size="small">
+      { isFetching && <Progress/> }
+      
+      <Fab 
+        disabled={isFetching}
+        className={classes.fab} 
+        onClick={handleAddBTNClick} 
+        aria-label="Add" 
+        color="primary" 
+        size="small"
+      >
         <AddIcon />
       </Fab>
       <Typography variant="h4" align="center" gutterBottom>

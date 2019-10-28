@@ -6,6 +6,7 @@ const initState = {
   list: [],
   selected: null,
   isFetching: false,
+  addDialogOpen: false,
 }
 
 const spectrumReducer = handleActions({
@@ -15,7 +16,15 @@ const spectrumReducer = handleActions({
   }),
   STOP_FETCHING: state => ({
     ...state,
-    isFetching: true,
+    isFetching: false,
+  }),
+  OPEN_ADD_DIALOG: state => ({
+    ...state,
+    addDialogOpen: true,
+  }),
+  CLOSE_ADD_DIALOG: state => ({
+    ...state,
+    addDialogOpen: false,
   }),
   UPDATE_SPECTRUM_LIST: (state, payload) => {
     return({
