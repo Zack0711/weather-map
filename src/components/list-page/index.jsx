@@ -30,9 +30,11 @@ import DeleteIcon from '@material-ui/icons/Delete'
 import {
   getIsFetching,
   getList,
+  getIsAddDialogOpen,
 } from '../../selectors/spectrum'
 
 import {
+  openAddDialog,
   fetchSpectrumList, 
 } from '../../actions'
 
@@ -41,6 +43,7 @@ import httpService from '../../services/httpService'
 import FormDialog from '../form-dialog/index.jsx'
 
 import Progress from '../progress/index.jsx'
+import AddDialog from '../add-dialog/index.jsx'
 
 const useStyles = makeStyles(theme => ({
   paper:{
@@ -58,31 +61,7 @@ const useStyles = makeStyles(theme => ({
     top: theme.spacing(4),
     right: theme.spacing(4),
   },
-  form: {
-    minWidth: '360px'
-  }
 }))
-
-const AddSpectrumForm = ({className, value, handleChange, error}) => (
-  <form noValidate autoComplete="off" className={className}>
-    <TextField
-      value={value}
-      error={error.isError}
-      id="standard-full-width"
-      label="ID"
-      style={{ margin: 8 }}
-      onChange={handleChange}
-      helperText={error.message}
-      fullWidth
-      margin="normal"
-    />
-  </form>
-)
-
-const defaultError = {
-  isError: false,
-  message: '',
-}
 
 const ListPage = () => {
   const dispatch = useDispatch()
@@ -91,48 +70,29 @@ const ListPage = () => {
 
   const list = useSelector(getList)
   const isFetching = useSelector(getIsFetching)
+  const isAddDialogOpen = useSelector(getIsAddDialogOpen)
 
-  const [isFormOpen, setFormOpen] = React.useState(false)
+  const [isDeleting, setIsDeleting] = React.useState(false)
   const [isDeleteDialogOpen, setDeleteDialogOpen] = React.useState(false)
-  const [error, setError] = React.useState(defaultError)
-
-  const [addID, setAddID] = React.useState('')
   const [deleteID, setDeleteID] = React.useState('')
 
   useEffect(() => {
     dispatch(fetchSpectrumList)
   }, [])
 
-  const handleChange = event => {
-    setAddID(event.target.value)
-  }
-
-  const onFormClose = () => { setFormOpen(false) }
-  const onAddConfirm = async () => { 
-    if(addID){
-      const rsp = await httpService.sendRequest('addSpectrum', { data: {id: addID} })
-      if(rsp.message){
-        setError({
-          isError: true,
-          message: rsp.message
-        })
-      }else{
-        setAddID('')
-        onFormClose()
-        history.push(`/list/${addID}`)
-      }
-    }
-  }
-
   const onDeleteDialogClose = () => { setDeleteDialogOpen(false) }  
   const onDeleteConfirm = async () => { 
+    setIsDeleting(true)
     const rsp = await httpService.sendRequest('deleteSpectrum', { id: deleteID })
+    setIsDeleting(false)
     setDeleteID('')
     setDeleteDialogOpen(false)
     dispatch(fetchSpectrumList)
   }
 
-  const handleAddBTNClick = () => { setFormOpen(true) }
+  const handleAddBTNClick = () => { 
+    dispatch(openAddDialog())
+  }
 
   const handleListClick = id => () => {
     history.push(`/list/${id}`)
@@ -145,8 +105,7 @@ const ListPage = () => {
 
   return(
     <Paper className={classes.paper}>
-      { isFetching && <Progress/> }
-      
+      { (isFetching && !isAddDialogOpen && !isDeleteDialogOpen) && <Progress/> }      
       <Fab 
         disabled={isFetching}
         className={classes.fab} 
@@ -181,24 +140,14 @@ const ListPage = () => {
           ))
         }
       </List>
-      <FormDialog 
-        title={'新增資料'}
-        children={<AddSpectrumForm 
-          error={error}
-          className={classes.form}
-          value={addID} 
-          handleChange={handleChange} 
-        />}
-        open={isFormOpen} 
-        onClose={onFormClose}  
-        onConfirm={onAddConfirm}
-      />
+      <AddDialog />
       <FormDialog 
         title={'確定刪除這筆資料？'}
         children={deleteID}
         open={isDeleteDialogOpen} 
         onClose={onDeleteDialogClose}  
         onConfirm={onDeleteConfirm}
+        isFetching={isDeleting}
       />
     </Paper>
   )

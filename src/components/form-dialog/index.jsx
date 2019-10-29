@@ -7,6 +7,8 @@ import DialogContent from '@material-ui/core/DialogContent'
 import DialogContentText from '@material-ui/core/DialogContentText'
 import DialogTitle from '@material-ui/core/DialogTitle'
 
+import Progress from '../progress/index.jsx'
+
 const FormDialog = props => {
   const {
     title,
@@ -14,19 +16,22 @@ const FormDialog = props => {
     children,
     onClose,
     onConfirm,
+    disabled,
+    isFetching,
   } = props
 
   return (
     <Dialog open={open} aria-labelledby="form-dialog-title">
       <DialogTitle id="form-dialog-title">{title}</DialogTitle>
-      <DialogContent>
+      <DialogContent style={{position: 'relative', minHeight: '60px', minWidth: '240px'}}>
+        { isFetching && <Progress/> }
         { children }
       </DialogContent>
       <DialogActions>
-        <Button onClick={onConfirm} variant="contained" color="primary">
+        <Button onClick={onConfirm} variant="contained" color="primary" disabled={isFetching}>
           確定
         </Button>
-        <Button onClick={onClose} color="primary">
+        <Button onClick={onClose} color="primary" disabled={isFetching}>
           取消
         </Button>
       </DialogActions>

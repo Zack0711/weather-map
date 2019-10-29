@@ -7,6 +7,11 @@ const initState = {
   selected: null,
   isFetching: false,
   addDialogOpen: false,
+  addSpectrumResult: {
+    error: false,
+    success: false,
+    message: '',
+  },
 }
 
 const spectrumReducer = handleActions({
@@ -39,7 +44,16 @@ const spectrumReducer = handleActions({
         ...payload.data
       }
     })
-  }
+  },
+  UPDATE_ADD_SPECTRUM_RESULT: (state, payload) => {
+    return({
+      ...state,
+      addSpectrumResult: {
+        ...state.addSpectrumResult,
+        ...payload.result,
+      }
+    })
+  },
 }, initState)
 
 export default spectrumReducer

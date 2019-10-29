@@ -23,6 +23,9 @@ export const fetchSpectrumList = async (dispatch, getState) => {
 export const UPDATE_EDITED_SPECTRUM = 'UPDATE_EDITED_SPECTRUM'
 export const fetchEditedSpectrumData = id => async (dispatch, getState) => {
   const rsp = await fetchData(dispatch, { method: 'getSpectrum', config:{id}})
+  console.log(rsp.data.data)
+  console.log(JSON.parse(rsp.data.data))
+  //rsp.data.data = JSON.parse(rsp.data.data)
   dispatch({
     type: UPDATE_EDITED_SPECTRUM,
     data: {
@@ -32,6 +35,43 @@ export const fetchEditedSpectrumData = id => async (dispatch, getState) => {
 }
 
 export const OPEN_ADD_DIALOG = 'OPEN_ADD_DIALOG'
-export const openAddDialog = () => ({ tpye: OPEN_ADD_DIALOG})
+export const openAddDialog = () => ({ type: OPEN_ADD_DIALOG})
 export const CLOSE_ADD_DIALOG = 'CLOSE_ADD_DIALOG'
-export const closeAddDialog = () => ({ tpye: CLOSE_ADD_DIALOG})
+export const closeAddDialog = () => ({ type: CLOSE_ADD_DIALOG})
+
+export const UPDATE_ADD_SPECTRUM_RESULT = 'UPDATE_ADD_SPECTRUM_RESULT'
+
+export const addSpectrum = id => async (dispatch, getState) => {
+
+  if(parseInt(id)){
+    const rsp = await fetchData(dispatch, { method: 'addSpectrum', config:{ data: {id}} })
+    if(rsp.message){
+      dispatch({
+        type: UPDATE_ADD_SPECTRUM_RESULT,
+        result: {
+          error: true,
+          success: false,
+          message: rsp.message,
+        },
+      })
+    }else{
+      dispatch({
+        type: UPDATE_ADD_SPECTRUM_RESULT,
+        result: {
+          error: false,
+          success: true,
+          message: '',
+        },
+      })
+    }  
+  } else {
+    dispatch({
+      type: UPDATE_ADD_SPECTRUM_RESULT,
+      result: {
+        error: true,
+        success: false,
+        message: '請輸入數字',
+      },
+    })
+  }
+}

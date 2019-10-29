@@ -22,6 +22,9 @@ import {
   getSelected,
 } from '../../selectors/spectrum'
 
+import Progress from '../progress/index.jsx'
+import Chart from '../chart/index.jsx'
+
 const useStyles = makeStyles(theme => ({
   paper:{
     marginBottom: theme.spacing(4),
@@ -29,6 +32,8 @@ const useStyles = makeStyles(theme => ({
     paddingBottom: theme.spacing(4),
     paddingLeft: theme.spacing(2),
     paddingRight: theme.spacing(4),
+    height: '100%',
+    overflow: 'auto',
   },
   button: {
     margin: theme.spacing(1),
@@ -56,6 +61,7 @@ const EditPage = () => {
 
   return(
     <Paper className={classes.paper}>
+      { isFetching && <Progress/> }      
       <IconButton edge="end" aria-label="delete" onClick={() => history.push(`/list`) }>
         <ArrowBackIosIcon />
       </IconButton>
