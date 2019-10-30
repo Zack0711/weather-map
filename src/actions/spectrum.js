@@ -33,7 +33,10 @@ export const fetchEditedSpectrumData = id => async (dispatch, getState) => {
   const rsp = await fetchData(dispatch, { method: 'getSpectrum', config:{id}})
   const spectrum = {
     id: rsp.data.id,
-    data: csvParse(rsp.data.csv_data),
+    subclass: rsp.data.subclass,
+    csvUrl: rsp.data.csv_url,
+    reference: rsp.data.reference,
+    data: csvParse(rsp.data.data),
   }
   console.log(spectrum)
   //console.log(JSON.parse(rsp.data.data))
