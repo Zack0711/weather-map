@@ -12,6 +12,7 @@ import Paper from '@material-ui/core/Paper'
 
 import IconButton from '@material-ui/core/IconButton'
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos'
+import Toolbar from '@material-ui/core/Toolbar'
 
 import {
   fetchEditedSpectrumData, 
@@ -25,15 +26,14 @@ import {
 import Progress from '../progress/index.jsx'
 import Chart from '../chart/index.jsx'
 
+
 const useStyles = makeStyles(theme => ({
-  paper:{
-    marginBottom: theme.spacing(4),
-    paddingTop: theme.spacing(4),
-    paddingBottom: theme.spacing(4),
-    paddingLeft: theme.spacing(2),
-    paddingRight: theme.spacing(4),
+  paper: {
     height: '100%',
     overflow: 'auto',
+  },
+  main: {
+    padding: `${theme.spacing(2)}px ${theme.spacing(4)}px ${theme.spacing(2)}px ${theme.spacing(2)}px`,
   },
   button: {
     margin: theme.spacing(1),
@@ -57,16 +57,20 @@ const EditPage = () => {
     history.push(`/list/${id}`)
   }
 
-  console.log(spectrumData)
-
   return(
     <Paper className={classes.paper}>
-      { isFetching && <Progress/> }      
-      <IconButton edge="end" aria-label="delete" onClick={() => history.push(`/list`) }>
-        <ArrowBackIosIcon />
-      </IconButton>
-
-      Spectrum: {id}
+      { isFetching && <Progress/> }
+      <Toolbar>  
+        <IconButton edge="end" aria-label="delete" onClick={() => history.push(`/list`) }>
+          <ArrowBackIosIcon />
+        </IconButton>
+      </Toolbar>
+      <main className={classes.main}>
+        Spectrum: {id}
+        <Chart 
+          spectrumData={ spectrumData.data ? spectrumData : {} }
+         />
+       </main>
     </Paper>
   )
 }

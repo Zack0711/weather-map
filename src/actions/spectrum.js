@@ -2,6 +2,10 @@ import { createActions } from 'redux-actions';
 
 import httpService from '../services/httpService'
 
+import {
+  csvParse
+} from '../utilities/csv'
+
 export const START_FETCHING = 'START_FETCHING'
 export const STOP_FETCHING = 'STOP_FETCHING'
 const fetchData = async (dispatch, fetch) => {
@@ -22,14 +26,22 @@ export const fetchSpectrumList = async (dispatch, getState) => {
 
 export const UPDATE_EDITED_SPECTRUM = 'UPDATE_EDITED_SPECTRUM'
 export const fetchEditedSpectrumData = id => async (dispatch, getState) => {
+  dispatch({
+    type: UPDATE_EDITED_SPECTRUM,
+    data: null,
+  })
   const rsp = await fetchData(dispatch, { method: 'getSpectrum', config:{id}})
-  console.log(rsp.data.data)
-  console.log(JSON.parse(rsp.data.data))
+  const spectrum = {
+    id: rsp.data.id,
+    data: csvParse(rsp.data.csv_data),
+  }
+  console.log(spectrum)
+  //console.log(JSON.parse(rsp.data.data))
   //rsp.data.data = JSON.parse(rsp.data.data)
   dispatch({
     type: UPDATE_EDITED_SPECTRUM,
     data: {
-    	...rsp.data
+    	...spectrum
     },
   })
 }

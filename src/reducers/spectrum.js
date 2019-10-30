@@ -4,7 +4,7 @@ import { handleActions } from 'redux-actions';
 
 const initState = {
   list: [],
-  selected: null,
+  selected: {},
   isFetching: false,
   addDialogOpen: false,
   addSpectrumResult: {
