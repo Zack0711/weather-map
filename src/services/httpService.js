@@ -4,7 +4,8 @@ import Promise from 'promise-polyfill'
 // To add to window
 if (!window.Promise) window.Promise = Promise
 
-const apiRoot = 'http://localhost:8080'
+const apiRoot = 'https://node-site-253814.appspot.com/'
+//const apiRoot = 'http://localhost:8080'
 
 const serverApi = {
   getSpectrumData: {
@@ -33,6 +34,14 @@ const serverApi = {
   },
   deleteSpectrum: {
     method: 'DELETE',
+    url: config => `${apiRoot}/spectrum/${config.id}`,
+    headers: {
+      'Content-Type': 'application/json',
+      mode: 'cors',
+    },
+  },
+  updateSpectrum: {
+    method: 'PUT',
     url: config => `${apiRoot}/spectrum/${config.id}`,
     headers: {
       'Content-Type': 'application/json',
@@ -68,6 +77,7 @@ class HttpService {
     let url = serverApi[apikey].url(config);
 
     switch(requestOption.method) {
+      case 'PUT':
       case 'POST':
         console.log(config)
         if(config.data) requestOption.body = JSON.stringify(config.data);

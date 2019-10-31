@@ -34,11 +34,14 @@ export const fetchEditedSpectrumData = id => async (dispatch, getState) => {
   const spectrum = {
     id: rsp.data.id,
     subclass: rsp.data.subclass,
-    csvUrl: rsp.data.csv_url,
+    csvUrl: rsp.data.csv_link,
     reference: rsp.data.reference,
+    redshift: rsp.data.redshift,
+    surfaceTemperature: rsp.data.surface_temperature,
+    elementComposition: rsp.data.element_composition,
     data: csvParse(rsp.data.data),
   }
-  console.log(spectrum)
+  //console.log(spectrum)
   //console.log(JSON.parse(rsp.data.data))
   //rsp.data.data = JSON.parse(rsp.data.data)
   dispatch({
@@ -90,3 +93,17 @@ export const addSpectrum = id => async (dispatch, getState) => {
     })
   }
 }
+
+export const updateSpectrum = (id, values) => async (dispatch, getState) => {
+  const rsp = await fetchData(dispatch, { 
+    method: 'updateSpectrum', 
+    config:{ 
+      id,
+      data: {
+        ...values
+      },
+    }
+  })
+  console.log(rsp)
+}
+
