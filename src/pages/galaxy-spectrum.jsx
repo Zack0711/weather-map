@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 
 import { makeStyles } from '@material-ui/core/styles'
 
@@ -26,8 +26,18 @@ import {
   useHistory,
 } from "react-router-dom"
 
+import {
+  getViewed,
+  getIsFetching,
+} from '../selectors/spectrum'
+
+import {
+  updateViewedSpectrum,
+} from '../actions'
+
 import ChartWrapper from '../containers/chart-wrapper'
 import Chart from '../containers/chart'
+import Progress from '../components/progress/index.jsx'
 
 import { genEnergyDensityDataSet } from '../utilities/formula'
 
@@ -78,13 +88,20 @@ const spectralType = {
 
 const GalaxySpectrum = () => {
   const classes = useStyles()
-  const spectrumData = useSelector(getSelectedSpectrum)
+  const spectrumData = useSelector(getViewed)
+  //const 
 
   const history = useHistory()
+  const dispatch = useDispatch()
 
-  const [temperature, setTemperature] = React.useState(DEFAULT_TEMPERATURE)
-  const [planckData, setPlanckData] = React.useState(genEnergyDensityDataSet(DEFAULT_TEMPERATURE))
-  const [open, setOpen] = React.useState(false)
+  const [temperature, setTemperature] = useState(DEFAULT_TEMPERATURE)
+  const [planckData, setPlanckData] = useState(genEnergyDensityDataSet(DEFAULT_TEMPERATURE))
+  const [open, setOpen] = useState(false)
+
+  const isFetching = useSelector(getIsFetching)
+  useEffect(() => {
+    dispatch(updateViewedSpectrum)
+  }, [])
 
   const handleSliderChange = (e, val) => {
     setTemperature(val)
@@ -99,8 +116,11 @@ const GalaxySpectrum = () => {
     setOpen(false);
   };
 
+  //console.log(spectrumData)
+
   return(
     <>
+      { isFetching && <Progress/> }    
       <AppBar position="static" color="default">
         <Toolbar variant="dense">
           <IconButton 
@@ -116,6 +136,9 @@ const GalaxySpectrum = () => {
           </IconButton>
           <Typography variant="h6" color="inherit">
             恆星的等效溫度
+            {
+              spectrumData.id && `(ID: ${spectrumData.id})`
+            }
           </Typography>
         </Toolbar>
       </AppBar>
@@ -129,8 +152,8 @@ const GalaxySpectrum = () => {
           <Typography variant="h6" align="center" gutterBottom>絕對溫度: {temperature}</Typography>
           <Slider
             defaultValue={DEFAULT_TEMPERATURE}
-            step={10}
-            max={8000}
+            step={50}
+            max={12000}
             onChange={handleSliderChange}
           />
           <Grid
@@ -149,18 +172,18 @@ const GalaxySpectrum = () => {
         </Container>
       </main>
       {
-        spectrumData.subClass && (
+        spectrumData.subclass && (
           <Dialog
             open={open}
             onClose={handleClose}
             aria-labelledby="responsive-dialog-title"
           >
             <DialogTitle id="customized-dialog-title" onClose={handleClose}>
-              恆星的光譜分類為：{spectrumData.subClass}
+              恆星的光譜分類為：{spectrumData.subclass}
             </DialogTitle>
             <DialogContent>
               <DialogContentText>
-                表面溫度為：{spectralType[spectrumData.subClass[0]]}<br/>
+                表面溫度為：{spectralType[spectrumData.subclass[0]]}<br/>
                 Each spectral type is divided into 10 subclasses, A0, A1, A2, ...A9 etc. The spectral types and sub-classes represent a temperature sequence, from hotter (O stars) to cooler (M stars), and from hotter (subclass 0) to cooler (subclass 9).
               </DialogContentText>
             </DialogContent>

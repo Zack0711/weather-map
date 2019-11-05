@@ -7,6 +7,10 @@ import {
   getChartData
 } from '../actions/chart';
 
+import {
+  getViewed,
+} from '../selectors/spectrum'
+
 const getSelectedSpectrum = state => {
   const {
     selected,
@@ -17,7 +21,7 @@ const getSelectedSpectrum = state => {
 }
 
 const mapStateToProps = state => ({
-  spectrumData: getSelectedSpectrum(state),
+  spectrumData: getViewed(state),
 })
 
 const mapDispatchToProps = dispatch => ({

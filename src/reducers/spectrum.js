@@ -5,6 +5,7 @@ import { handleActions } from 'redux-actions';
 const initState = {
   list: [],
   selected: {},
+  viewed: {},
   isFetching: false,
   addDialogOpen: false,
   addSpectrumResult: {
@@ -51,6 +52,14 @@ const spectrumReducer = handleActions({
       addSpectrumResult: {
         ...state.addSpectrumResult,
         ...payload.result,
+      }
+    })
+  },
+  UPDATE_VIEWED_SPECTRUM: (state, payload) => {
+    return({
+      ...state,
+      viewed: {
+        ...payload.data
       }
     })
   },

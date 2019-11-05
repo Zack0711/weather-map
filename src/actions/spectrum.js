@@ -6,6 +6,10 @@ import {
   csvParse
 } from '../utilities/csv'
 
+import {
+  getList,
+} from '../selectors/spectrum'
+
 export const START_FETCHING = 'START_FETCHING'
 export const STOP_FETCHING = 'STOP_FETCHING'
 const fetchData = async (dispatch, fetch) => {
@@ -48,6 +52,43 @@ export const fetchEditedSpectrumData = id => async (dispatch, getState) => {
     type: UPDATE_EDITED_SPECTRUM,
     data: {
     	...spectrum
+    },
+  })
+}
+
+export const UPDATE_VIEWED_SPECTRUM = 'UPDATE_VIEWED_SPECTRUM'
+export const updateViewedSpectrum = async (dispatch, getState) => {
+  dispatch({
+    type: UPDATE_VIEWED_SPECTRUM,
+    data: null,
+  })
+
+  let list = getList(getState())
+
+  if(!list.length){
+    await dispatch(fetchSpectrumList)
+    list = getList(getState())
+  }
+
+  const randomIndex = Math.floor(Math.random()*list.length)
+  const id = list[randomIndex].id
+
+  const rsp = await fetchData(dispatch, { method: 'getSpectrum', config:{id}})
+  const spectrum = {
+    id: rsp.data.id,
+    subclass: rsp.data.subclass,
+    csvUrl: rsp.data.csv_link,
+    reference: rsp.data.reference,
+    redshift: rsp.data.redshift,
+    surfaceTemperature: rsp.data.surface_temperature,
+    elementComposition: rsp.data.element_composition,
+    data: csvParse(rsp.data.data),
+  }
+
+  dispatch({
+    type: UPDATE_VIEWED_SPECTRUM,
+    data: {
+      ...spectrum
     },
   })
 }

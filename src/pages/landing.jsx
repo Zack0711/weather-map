@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
 
 import AppBar from '@material-ui/core/AppBar';
 import Button from '@material-ui/core/Button';
@@ -20,6 +21,15 @@ import {
   useHistory,
 } from "react-router-dom"
 
+import Progress from '../components/progress/index.jsx'
+
+import {
+  fetchSpectrumList, 
+} from '../actions'
+
+import {
+  getIsFetching,
+} from '../selectors/spectrum'
 
 const Copyright = () => (
   <Typography variant="body2" color="textSecondary" align="center">
@@ -58,6 +68,10 @@ const useStyles = makeStyles(theme => ({
   cardContent: {
     flexGrow: 1,
   },
+  main: {
+    minHeight: 'calc(100vh - 116px)',
+    position: 'relative',
+  },
   footer: {
     backgroundColor: theme.palette.background.paper,
     padding: theme.spacing(6),
@@ -66,9 +80,16 @@ const useStyles = makeStyles(theme => ({
 
 const cards = [1, 2, 3];
 
-export default function Album() {
+const Landing = () => {
   const classes = useStyles()
   const history = useHistory()
+  const dispatch = useDispatch()
+
+  const isFetching = useSelector(getIsFetching)
+
+  useEffect(() => {
+    dispatch(fetchSpectrumList)
+  }, [])
 
   const handleClick = () => {
     history.push('/spectrum')
@@ -77,8 +98,8 @@ export default function Album() {
   return (
     <>
       <CssBaseline />
-      <main>
-        {/* Hero unit */}
+      <main className={classes.main}>
+        { isFetching && <Progress/> }
         <div className={classes.heroContent}>
           <Container maxWidth="sm">
             <Typography component="h1" variant="h2" align="center" color="textPrimary" gutterBottom>
@@ -114,11 +135,11 @@ export default function Album() {
           </Grid>
         </Container>
       </main>
-      {/* Footer */}
       <footer className={classes.footer}>
         <Copyright />
       </footer>
-      {/* End footer */}
     </>
-  );
+  )  
 }
+
+export default Landing
