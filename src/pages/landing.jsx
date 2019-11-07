@@ -17,6 +17,17 @@ import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import Link from '@material-ui/core/Link';
 
+import List from '@material-ui/core/List'
+import ListItem from '@material-ui/core/ListItem'
+import ListItemAvatar from '@material-ui/core/ListItemAvatar'
+import ListItemIcon from '@material-ui/core/ListItemIcon'
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
+import ListItemText from '@material-ui/core/ListItemText'
+import Avatar from '@material-ui/core/Avatar'
+
+import ListAltIcon from '@material-ui/icons/ListAlt'
+import DescriptionIcon from '@material-ui/icons/Description'
+
 import {
   useHistory,
 } from "react-router-dom"
@@ -24,12 +35,17 @@ import {
 import Progress from '../components/progress/index.jsx'
 
 import {
-  fetchSpectrumList, 
+  randomPickupID,
+  updateViewedID,
 } from '../actions'
 
 import {
+  getList,
+  getViewedID,
   getIsFetching,
 } from '../selectors/spectrum'
+
+import FormDialog from '../components/form-dialog/index.jsx'
 
 const Copyright = () => (
   <Typography variant="body2" color="textSecondary" align="center">
@@ -72,6 +88,9 @@ const useStyles = makeStyles(theme => ({
     minHeight: 'calc(100vh - 116px)',
     position: 'relative',
   },
+  button: {
+    margin: theme.spacing(1),
+  },  
   footer: {
     backgroundColor: theme.palette.background.paper,
     padding: theme.spacing(6),
@@ -86,13 +105,30 @@ const Landing = () => {
   const dispatch = useDispatch()
 
   const isFetching = useSelector(getIsFetching)
+  const viewedID = useSelector(getViewedID)
+  const list = useSelector(getList)
+
+  const [listOpen, setListOpen] = useState(false)
 
   useEffect(() => {
-    dispatch(fetchSpectrumList)
+    dispatch(randomPickupID)
   }, [])
 
   const handleClick = () => {
     history.push('/spectrum')
+  }
+
+  const handleListButtonClick = () => {
+    setListOpen(true)
+  }
+
+  const closeList = () =>{
+    setListOpen(false)    
+  }
+
+  const selectSpectrun = id => {
+    dispatch(updateViewedID(id))
+    setListOpen(false)    
   }
 
   return (
@@ -105,6 +141,19 @@ const Landing = () => {
             <Typography component="h1" variant="h2" align="center" color="textPrimary" gutterBottom>
               光譜學習軟體
             </Typography>
+            <Grid
+              container
+              direction="row"
+              justify="center"
+              alignItems="center"
+            >
+              <Typography component="p" variant="body1" align="center" color="textPrimary">
+                星體光譜ID：{viewedID}
+              </Typography>
+              <Button variant="contained" color="primary" className={classes.button} onClick={handleListButtonClick}>
+                <ListAltIcon />
+              </Button>
+            </Grid>
             <Typography variant="h5" align="center" color="textSecondary" paragraph>
               點擊以下單元進行
             </Typography>
@@ -135,6 +184,35 @@ const Landing = () => {
           </Grid>
         </Container>
       </main>
+      <FormDialog 
+        title={'選擇其他光譜資料'}
+        open={listOpen} 
+        onClose={closeList}  
+        isFetching={isFetching}
+      >
+        <List>
+          {
+            list.map( d => (
+              <ListItem 
+                key={d.id} 
+                onClick={() => selectSpectrun(d.id)} 
+                selected={d.id === viewedID}
+                button
+              >
+                <ListItemAvatar>
+                  <Avatar>
+                    <DescriptionIcon />
+                  </Avatar>
+                </ListItemAvatar>
+                <ListItemText
+                  primary={d.id}
+                />
+              </ListItem>
+            ))
+          }
+        </List>
+      </FormDialog>
+
       <footer className={classes.footer}>
         <Copyright />
       </footer>

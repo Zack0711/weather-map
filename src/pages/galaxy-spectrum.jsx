@@ -116,8 +116,6 @@ const GalaxySpectrum = () => {
     setOpen(false);
   };
 
-  //console.log(spectrumData)
-
   return(
     <>
       { isFetching && <Progress/> }    

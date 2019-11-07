@@ -28,9 +28,13 @@ const FormDialog = props => {
         { children }
       </DialogContent>
       <DialogActions>
-        <Button onClick={onConfirm} variant="contained" color="primary" disabled={isFetching}>
-          確定
-        </Button>
+        {
+          onConfirm && (
+            <Button onClick={onConfirm} variant="contained" color="primary" disabled={isFetching}>
+              確定
+            </Button>
+          )
+        }
         <Button onClick={onClose} color="primary" disabled={isFetching}>
           取消
         </Button>

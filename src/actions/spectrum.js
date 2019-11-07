@@ -8,6 +8,7 @@ import {
 
 import {
   getList,
+  getViewedID,
 } from '../selectors/spectrum'
 
 export const START_FETCHING = 'START_FETCHING'
@@ -45,9 +46,7 @@ export const fetchEditedSpectrumData = id => async (dispatch, getState) => {
     elementComposition: rsp.data.element_composition,
     data: csvParse(rsp.data.data),
   }
-  //console.log(spectrum)
-  //console.log(JSON.parse(rsp.data.data))
-  //rsp.data.data = JSON.parse(rsp.data.data)
+
   dispatch({
     type: UPDATE_EDITED_SPECTRUM,
     data: {
@@ -63,15 +62,19 @@ export const updateViewedSpectrum = async (dispatch, getState) => {
     data: null,
   })
 
-  let list = getList(getState())
+  let id = getViewedID(getState())
 
-  if(!list.length){
-    await dispatch(fetchSpectrumList)
-    list = getList(getState())
+  if(!id){
+    let list = getList(getState())
+
+    if(!list.length){
+      await dispatch(fetchSpectrumList)
+      list = getList(getState())
+    }
+
+    const randomIndex = Math.floor(Math.random()*list.length)
+    id = list[randomIndex].id
   }
-
-  const randomIndex = Math.floor(Math.random()*list.length)
-  const id = list[randomIndex].id
 
   const rsp = await fetchData(dispatch, { method: 'getSpectrum', config:{id}})
   const spectrum = {
@@ -92,6 +95,28 @@ export const updateViewedSpectrum = async (dispatch, getState) => {
     },
   })
 }
+
+export const UPDATE_VIEWED_ID = 'UPDATE_VIEWED_ID'
+export const updateViewedID = viewedID => ({
+  type: UPDATE_VIEWED_ID,
+  viewedID,  
+})
+
+export const randomPickupID = async (dispatch, getState) => {
+  const id = getViewedID(getState())
+  if(!id){
+    let list = getList(getState())
+
+    if(!list.length){
+      await dispatch(fetchSpectrumList)
+      list = getList(getState())
+    }
+
+    const randomIndex = Math.floor(Math.random()*list.length)
+    dispatch(updateViewedID(list[randomIndex].id))
+  }
+}
+
 
 export const OPEN_ADD_DIALOG = 'OPEN_ADD_DIALOG'
 export const openAddDialog = () => ({ type: OPEN_ADD_DIALOG})
