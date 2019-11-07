@@ -20,6 +20,7 @@ import {
 import Landing from './pages/landing.jsx'
 import GalaxySpectrum from './pages/galaxy-spectrum.jsx'
 import SpectrumList from './pages/spectrum-list.jsx'
+import Test from './pages/test.jsx'
 
 import httpService from './services/httpService'
 
@@ -35,6 +36,7 @@ const App = () => (
           <Route exact path="/" children={<Landing />} />
           <Route exact path="/spectrum" children={<GalaxySpectrum />} />
           <Route path="/list" children={<SpectrumList />} />
+          <Route path="/test" children={<Test />} />
         </Switch>
       </Router>
     </I18nextProvider>

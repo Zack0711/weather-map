@@ -12,7 +12,6 @@ class ChartWrapper extends React.Component {
   render() {
     const {
 	    children,
-      t,
     } = this.props;
 
     const mainClass = 'chart-wrapper'
