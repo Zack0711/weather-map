@@ -10,6 +10,13 @@ import {
   getList,
 } from '../selectors/spectrum'
 
+import {
+  GET_SPECTRUM_LIST,
+  GET_SPECTRUM
+} from '../graphql'
+
+//import client from '../client'
+
 export const START_FETCHING = 'START_FETCHING'
 export const STOP_FETCHING = 'STOP_FETCHING'
 const fetchData = async (dispatch, fetch) => {
@@ -17,6 +24,13 @@ const fetchData = async (dispatch, fetch) => {
   const rsp = await httpService.sendRequest(fetch.method, fetch.config)
   dispatch({ type: STOP_FETCHING })
   return rsp
+}
+
+export const fetchGraphQL = client => async (dispatch, getState) => {
+  dispatch({ type: START_FETCHING })
+  const rsp = await client.query({ query: GET_SPECTRUM_LIST, fetchPolicy: 'network-only'})
+  dispatch({ type: STOP_FETCHING })
+  console.log(rsp)
 }
 
 export const UPDATE_SPECTRUM_LIST = 'UPDATE_SPECTRUM_LIST'

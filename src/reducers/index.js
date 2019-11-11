@@ -8,7 +8,6 @@ import client from '../client'
 const rootReducer = combineReducers({
   spectrum,
   chart,
-//  apollo: client.reducer(),
 })
 
 export default rootReducer;
