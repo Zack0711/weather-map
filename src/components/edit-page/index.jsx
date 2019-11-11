@@ -29,6 +29,7 @@ import {
 import {
   getIsFetching,
   getSelected,
+  getDefaultAnswer,
 } from '../../selectors/spectrum'
 
 import Progress from '../progress/index.jsx'
@@ -86,6 +87,7 @@ const EditPage = () => {
   let { id } = useParams()
   const spectrumData = useSelector(getSelected)
   const isFetching = useSelector(getIsFetching)
+  const defaultAnswer = useSelector(getDefaultAnswer) 
 
   const [values, setValues] = React.useState({
     subclass: '',
@@ -174,6 +176,7 @@ const EditPage = () => {
           <Grid item sm={4}>
             <TextField
               label="表面溫度"
+              placeholder={defaultAnswer.surface_temperature}
               multiline
               value={values.surfaceTemperature}
               onChange={handleChange('surfaceTemperature')}
@@ -186,6 +189,7 @@ const EditPage = () => {
             <TextField
               label="成分組成"
               multiline
+              placeholder={defaultAnswer.element_composition}
               value={values.elementComposition}
               onChange={handleChange('elementComposition')}
               rows="4"
@@ -196,6 +200,7 @@ const EditPage = () => {
           <Grid item sm={4}>
             <TextField
               label="紅位移"
+              placeholder={defaultAnswer.redshift}
               multiline
               value={values.redshift}
               onChange={handleChange('redshift')}

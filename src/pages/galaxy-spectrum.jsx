@@ -29,6 +29,7 @@ import {
 import {
   getViewed,
   getIsFetching,
+  getDefaultAnswer,
 } from '../selectors/spectrum'
 
 import {
@@ -89,7 +90,7 @@ const spectralType = {
 const GalaxySpectrum = () => {
   const classes = useStyles()
   const spectrumData = useSelector(getViewed)
-  //const 
+  const defaultAnswer = useSelector(getDefaultAnswer) 
 
   const history = useHistory()
   const dispatch = useDispatch()
@@ -115,6 +116,13 @@ const GalaxySpectrum = () => {
   const handleClose = () => {
     setOpen(false);
   };
+
+  const answer = t => {
+    const surfaceTemperature = spectrumData.surfaceTemperature || defaultAnswer.surface_temperature
+    return surfaceTemperature 
+      ? surfaceTemperature.replace('{{t}}', t).split('[br]').map( (d, i) => (<React.Fragment >{d}<br /></React.Fragment>))
+      : ''
+  }
 
   return(
     <>
@@ -181,8 +189,7 @@ const GalaxySpectrum = () => {
             </DialogTitle>
             <DialogContent>
               <DialogContentText>
-                表面溫度為：{spectralType[spectrumData.subclass[0]]}<br/>
-                Each spectral type is divided into 10 subclasses, A0, A1, A2, ...A9 etc. The spectral types and sub-classes represent a temperature sequence, from hotter (O stars) to cooler (M stars), and from hotter (subclass 0) to cooler (subclass 9).
+                {answer(spectralType[spectrumData.subclass[0]])}
               </DialogContentText>
             </DialogContent>
             <DialogActions>

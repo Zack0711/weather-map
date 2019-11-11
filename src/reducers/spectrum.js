@@ -14,6 +14,7 @@ const initState = {
     success: false,
     message: '',
   },
+  defaultAnswer: {},
 }
 
 const spectrumReducer = handleActions({
@@ -37,6 +38,12 @@ const spectrumReducer = handleActions({
     return({
       ...state,
       list: payload.list,
+    })    
+  },
+  UPDATE_DEFAULT_ANSWER: (state, payload) => {
+    return({
+      ...state,
+      defaultAnswer: payload.defaultAnswer,
     })    
   },
   UPDATE_EDITED_SPECTRUM: (state, payload) => {

@@ -20,8 +20,43 @@ const fetchData = async (dispatch, fetch) => {
   return rsp
 }
 
+export const UPDATE_DEFAULT_ANSWER = 'UPDATE_DEFAULT_ANSWER'
+export const fetchDefaultAnswer = async (dispatch, getState) => {
+  const rsp = await fetchData(dispatch, { method: 'getDefaultAnswer', config:{}})
+  const defaultAnswer = {}
+
+  rsp.data.forEach( d => defaultAnswer[d.field] = d.answer)
+
+  dispatch({
+    type: UPDATE_DEFAULT_ANSWER,
+    defaultAnswer,
+  })
+}
+
+export const saveDefaultAnswer = values => async (dispatch, getState) => {
+  /*
+  const surfaceTemperature = '表面溫度為：{{t}} [br] Each spectral type is divided into 10 subclasses, A0, A1, A2, ...A9 etc. The spectral types and sub-classes represent a temperature sequence, from hotter (O stars) to cooler (M stars), and from hotter (subclass 0) to cooler (subclass 9).'
+  */
+  const rsp = await fetchData(dispatch, { 
+    method: 'updateDefaultAnswer', 
+    config:{ 
+      data: {
+        ...values
+      },
+    }
+  })
+
+  const defaultAnswer = {}
+  rsp.data.forEach( d => defaultAnswer[d.field] = d.answer)
+  dispatch({
+    type: UPDATE_DEFAULT_ANSWER,
+    defaultAnswer,
+  })
+}
+
 export const UPDATE_SPECTRUM_LIST = 'UPDATE_SPECTRUM_LIST'
 export const fetchSpectrumList = async (dispatch, getState) => {
+
   const rsp = await fetchData(dispatch, { method: 'getAllSpectrums', config:{}})
   dispatch({
     type: UPDATE_SPECTRUM_LIST,
@@ -68,6 +103,8 @@ export const updateViewedSpectrum = async (dispatch, getState) => {
     let list = getList(getState())
 
     if(!list.length){
+      //await dispatch(saveDefaultAnswer)
+      await dispatch(fetchDefaultAnswer)
       await dispatch(fetchSpectrumList)
       list = getList(getState())
     }
@@ -108,6 +145,7 @@ export const randomPickupID = async (dispatch, getState) => {
     let list = getList(getState())
 
     if(!list.length){
+      await dispatch(fetchDefaultAnswer)
       await dispatch(fetchSpectrumList)
       list = getList(getState())
     }

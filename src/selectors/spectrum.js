@@ -13,3 +13,5 @@ export const getIsFetching = state => get(state, 'spectrum.isFetching', false)
 export const getIsAddDialogOpen = state => get(state, 'spectrum.addDialogOpen', false)
 
 export const getIsAddSpectrumResult = state => get(state, 'spectrum.addSpectrumResult', {})
+
+export const getDefaultAnswer = state => get(state, 'spectrum.defaultAnswer', {})

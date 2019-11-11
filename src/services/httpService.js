@@ -56,13 +56,22 @@ const serverApi = {
       mode: 'cors',
     },
   },
-  getAllPost: {
+  getDefaultAnswer: {
     method: 'GET',
-    url: config => `http://140.122.146.39/wordpress/index.php/wp-json/wp/v2/posts`,
+    url: config => `${apiRoot}/default-answer/`,
     headers: {
       'Content-Type': 'application/json',
+      mode: 'cors',
     },
   },
+  updateDefaultAnswer: {
+    method: 'PUT',
+    url: config => `${apiRoot}/default-answer/`,
+    headers: {
+      'Content-Type': 'application/json',
+      mode: 'cors',
+    },
+  }
 }
 
 /* eslint class-methods-use-this: ["error", { "exceptMethods": ["sendRequest"] }] */
