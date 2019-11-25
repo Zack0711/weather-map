@@ -77,6 +77,7 @@ export const fetchEditedSpectrumData = id => async (dispatch, getState) => {
     csvUrl: rsp.data.csv_link,
     reference: rsp.data.reference,
     redshift: rsp.data.redshift,
+    redshiftText: rsp.data.redshift_text,
     surfaceTemperature: rsp.data.surface_temperature,
     elementComposition: rsp.data.element_composition,
     data: csvParse(rsp.data.data),

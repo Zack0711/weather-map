@@ -94,6 +94,7 @@ const EditPage = () => {
     surfaceTemperature: '',
     elementComposition: '',
     redshift: '',
+    redshiftText: '',
   })
 
   useEffect(() => {
@@ -106,13 +107,15 @@ const EditPage = () => {
       surfaceTemperature,
       elementComposition,
       redshift,
+      redshiftText,
     } = spectrumData
 
     setValues({
       subclass,
       surfaceTemperature,
       elementComposition,
-      redshift,      
+      redshift,
+      redshiftText,      
     })
 
   }, [spectrumData])
@@ -159,8 +162,14 @@ const EditPage = () => {
             onChange={handleChange('subclass')}
             margin="normal"
           />
+          <TextField
+            label="Redshift"
+            value={values.redshift}
+            className={classes.textField}
+            onChange={handleChange('redshift')}
+            margin="normal"
+          />
           <Button variant="contained" color="default" onClick={openReference} className={classes.referenceButton}>
-            原始資料網址
             <LaunchIcon />
           </Button>
         </div>
@@ -199,11 +208,11 @@ const EditPage = () => {
           </Grid>
           <Grid item sm={4}>
             <TextField
-              label="紅位移"
+              label="紅位移說明"
               placeholder={defaultAnswer.redshift}
               multiline
-              value={values.redshift}
-              onChange={handleChange('redshift')}
+              value={values.redshiftText}
+              onChange={handleChange('redshiftText')}
               rows="4"
               className={classes.textFieldWide}
               margin="normal"

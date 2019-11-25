@@ -241,8 +241,19 @@ const ListPage = () => {
                 </Avatar>
               </ListItemAvatar>
               <ListItemText
-                primary={d.id}
-              />
+              >
+                <Grid
+                  container
+                  direction="row"
+                  justify="flex-start"
+                  alignItems="center"
+                  spacing={2}
+                >
+                  <Grid item xs="4">{d.id}</Grid>
+                  <Grid item xs="3">{d.subclass}</Grid>
+                  <Grid item xs="5">{d.redshift}</Grid>
+                </Grid>
+              </ListItemText>
               <ListItemSecondaryAction>
                 <IconButton edge="end" aria-label="delete" onClick={handleDeleteClick(d.id)}>
                   <DeleteIcon />
