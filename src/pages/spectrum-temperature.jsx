@@ -87,7 +87,7 @@ const spectralType = {
   C: '< 3,500K',
 }
 
-const GalaxySpectrum = () => {
+const SpectrumTemperature = () => {
   const classes = useStyles()
   const spectrumData = useSelector(getViewed)
   const defaultAnswer = useSelector(getDefaultAnswer) 
@@ -152,7 +152,7 @@ const GalaxySpectrum = () => {
         <Container maxWidth="lg" className={classes.container}>
           <Paper className={classes.paper}>
             <ChartWrapper>
-              <Chart planckData={planckData} />
+              <Chart planckData={planckData} type="temperature" />
             </ChartWrapper>
           </Paper>
           <Typography variant="h6" align="center" gutterBottom>絕對溫度: {temperature}</Typography>
@@ -204,4 +204,4 @@ const GalaxySpectrum = () => {
   )
 }
 
-export default GalaxySpectrum
+export default SpectrumTemperature

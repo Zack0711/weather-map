@@ -114,10 +114,6 @@ const Landing = () => {
     dispatch(randomPickupID)
   }, [])
 
-  const handleClick = () => {
-    history.push('/spectrum')
-  }
-
   const handleListButtonClick = () => {
     setListOpen(true)
   }
@@ -164,7 +160,7 @@ const Landing = () => {
           <Grid container spacing={4}>
             <Grid item xs={12} sm={6} md={4}>
               <Card className={classes.card}>
-                <CardActionArea onClick={handleClick}>
+                <CardActionArea onClick={() => {history.push('/spectrum-temperature')}}>
                   <CardMedia
                     className={classes.cardMedia}
                     image="https://media.apnarm.net.au/media/images/2019/01/17/b881764511z1_20190117092806_000g8c1cunjp2-0-l67ej4qv01hj7qv8nr2_ct1880x930.jpg"
@@ -176,6 +172,25 @@ const Landing = () => {
                     </Typography>
                     <Typography>
                       由普朗克的輻射分佈曲線對照恆星總輻射量，找出恆星的等效溫度。
+                    </Typography>
+                  </CardContent>
+                </CardActionArea>
+              </Card>
+            </Grid>
+            <Grid item xs={12} sm={6} md={4}>
+              <Card className={classes.card}>
+                <CardActionArea onClick={() => {history.push('/spectrum-composition')}}>
+                  <CardMedia
+                    className={classes.cardMedia}
+                    image="https://scx1.b-cdn.net/csz/news/800/2016/sofiaobserva.jpg"
+                    title="Image title"
+                  />
+                  <CardContent className={classes.cardContent}>
+                    <Typography gutterBottom variant="h5" component="h2">
+                      恆星的成分組成
+                    </Typography>
+                    <Typography>
+                      比對元素的光譜找出恆星的成分組成。
                     </Typography>
                   </CardContent>
                 </CardActionArea>

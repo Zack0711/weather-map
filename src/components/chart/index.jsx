@@ -23,6 +23,7 @@ const useStyles = makeStyles(theme => ({
 
 const Chart = props => {
   const {
+    type,
     spectrumData,
     planckData,
     t,
@@ -34,6 +35,8 @@ const Chart = props => {
    { Wavelength: 3800, energyDensity: 100 },
    { Wavelength: 7400, energyDensity: 100 },
   ]
+
+  console.log(type)
 
   return (
     <div className={classes.chart}>
@@ -58,7 +61,7 @@ const Chart = props => {
               type="number"
               allowDecimals={false}
               allowDataOverflow={true}
-              domain={[0, 20000]}
+              domain={ type === 'temperature' ? [0, 20000] : ['dataMin', 'dataMax']}
             />
             <YAxis 
               yAxisId="left"
@@ -81,7 +84,7 @@ const Chart = props => {
             <Area 
               yAxisId="light" 
               type="monotone" 
-              data={light} 
+              data={type === 'temperature' ? light : []} 
               dataKey="energyDensity" 
               stroke="#8884d8" 
               fill="url(#colorUv)"

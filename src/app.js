@@ -18,7 +18,8 @@ import {
 } from "react-router-dom"
 
 import Landing from './pages/landing.jsx'
-import GalaxySpectrum from './pages/galaxy-spectrum.jsx'
+import SpectrumTemperature from './pages/spectrum-temperature.jsx'
+import SpectrumComposition from './pages/spectrum-composition.jsx'
 import SpectrumList from './pages/spectrum-list.jsx'
 
 import httpService from './services/httpService'
@@ -33,7 +34,8 @@ const App = () => (
         <CssBaseline/>
         <Switch>
           <Route exact path="/" children={<Landing />} />
-          <Route exact path="/spectrum" children={<GalaxySpectrum />} />
+          <Route exact path="/spectrum-temperature" children={<SpectrumTemperature />} />
+          <Route exact path="/spectrum-composition" children={<SpectrumComposition />} />
           <Route path="/list" children={<SpectrumList />} />
         </Switch>
       </Router>
