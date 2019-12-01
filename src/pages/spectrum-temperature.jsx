@@ -76,6 +76,7 @@ const getSelectedSpectrum = state => {
   return selected ? data[selected] : {}
 }
 
+/*
 const spectralType = {
   O: '> 25,000K',
   B: '10,000-25,000K',
@@ -85,6 +86,24 @@ const spectralType = {
   K: '3,500-5,000K',
   M: '< 3,500K',
   C: '< 3,500K',
+}
+*/
+
+const spectralType = {
+  O: { range: [25000, Infinity], text: '> 25,000K' },
+  B: { range: [10000, 25000], text: '10,000-25,000K' },
+  A: { range: [7500, 10000], text: '7,500-10,000K' },
+  F: { range: [6000, 7500], text: '6,000-7,500K' },
+  G: { range: [5000, 6000], text: '5,000-6,000K' },
+  K: { range: [3500, 5000], text: '3,500-5,000K' },
+  M: { range: [0, 3500], text: '< 3,500K' },
+  C: { range: [0, 3500], text: '< 3,500K' },
+}
+
+const inRange = (val, range) => {
+  if(val >= range[0] && val <= range[1]) return '太厲害了！你的判斷真準～'
+  if(val >= range[0] - 500 && val <= range[1] + 500) return '很接近了喔！'
+  return '這樣的黑體輻射曲線與星體光譜是不是比較接近？！畫出解答溫度中間值的黑體輻射曲線'
 }
 
 const SpectrumTemperature = () => {
@@ -119,9 +138,17 @@ const SpectrumTemperature = () => {
 
   const answer = t => {
     const surfaceTemperature = spectrumData.surfaceTemperature || defaultAnswer.surface_temperature
+    return (
+      <React.Fragment>
+        表面溫度為：{t.text}<br />
+        { inRange(temperature, t.range) }
+      </React.Fragment>
+    )
+    /*
     return surfaceTemperature 
-      ? surfaceTemperature.replace('{{t}}', t).split('[br]').map( (d, i) => (<React.Fragment >{d}<br /></React.Fragment>))
+      ? surfaceTemperature.replace('{{t}}', t.join('-')).split('[br]').map( (d, i) => (<React.Fragment >{d}<br /></React.Fragment>))
       : ''
+    */
   }
 
   return(

@@ -112,6 +112,12 @@ module.exports = (env, argv) => {
           test: /\.(eot|svg|ttf|woff|woff2)$/,
           loader: 'file-loader?name=public/fonts/[name].[ext]'
         },
+        {
+          test: /\.csv$/,
+          use:[
+            "csv-loader"
+          ],
+        },
         { test: /\.html$/, loader: 'html-loader' }
       ]
     },

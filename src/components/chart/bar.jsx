@@ -22,11 +22,6 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
-const light = [
- { Wavelength: 3800, energyDensity: 100 },
- { Wavelength: 7400, energyDensity: 100 },
-]
-
 const dataLimitCheck = (type, data=[]) => {
   const dataLength = data.length
   return (
@@ -52,7 +47,24 @@ const Chart = props => {
   const [elementLimit, setElementLimit] = useState([0, 'dataMax'])
 
   useEffect(() => {
-  }, [elementData])
+    if(spectrumData){
+      setDataLimit(dataLimitCheck(type, spectrumData.data))      
+    }
+  }, [spectrumData])
+
+  useEffect(() => {
+    if(elementData[0]){
+      let max = 0
+      let wave = 0
+      elementData[0].forEach(d => {
+        if(d.Wavelength && d.energyDensity > max){
+          max = d.energyDensity
+          wave = d
+        }
+      })
+      console.log(max, wave)
+    }
+  }, [elementData[0]])
 
   return (
     <div className={classes.chart}>
@@ -66,7 +78,9 @@ const Chart = props => {
               type="number"
               allowDecimals={false}
               allowDataOverflow={true}
-              domain={[dataLimit.min, dataLimit.max]}
+              //domain={[0, 20000]}
+              domain={['dataMin', 'dataMax']}
+              //domain={[dataLimit.min, dataLimit.max]}
             />
             <YAxis 
               yAxisId="left"
@@ -77,37 +91,17 @@ const Chart = props => {
               allowDataOverflow={true}
             />
             <YAxis 
-              hide={true}
-              domain={[0, 'dataMax']}
-              yAxisId="right" 
-            />
-            <YAxis 
-              hide={true}
-              domain={[0, 'dataMax']}
-              yAxisId="light" 
-            />
-            <YAxis 
-              hide={true}
               yAxisId="element"
               type="number"
-              allowDataOverflow={true}
               domain={[0, 'dataMax']}
-            />
-            <Bar 
-              yAxisId="element"
-              dataKey="energyDensity"
-              barSize={1} 
-              fill="#0f0" 
             />
             <Line 
               yAxisId="element" 
-              type="monotone" 
-              data={elementData} 
+              type="step" 
+              data={elementData[0]} 
               dataKey="energyDensity" 
               dot={false} 
-              activeDot={false}
               isAnimationActive={false}
-              stroke="#82ca9d"
             />
             <Line 
               yAxisId="left" 
@@ -116,16 +110,6 @@ const Chart = props => {
               dataKey="BestFit" 
               dot={false} 
               isAnimationActive={false}
-            />
-            <Line 
-              yAxisId="right" 
-              type="monotone" 
-              data={planckData} 
-              dataKey="energyDensity" 
-              dot={false} 
-              activeDot={false}
-              isAnimationActive={false}
-              stroke="#82ca9d"
             />
           </ComposedChart>
         </ResponsiveContainer>

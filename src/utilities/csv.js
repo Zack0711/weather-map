@@ -12,6 +12,23 @@ const csvParse = txt => {
   })
 }
 
+const arrayParse = arr => {
+  const keys = arr.shift()
+  const data = arr.filter( d => Boolean(d[0]&&d[1]) ).map( d => ({
+    Wavelength: Number(d[0].replace(/\s/g, ''))*10,
+    energyDensity: Number(d[1].replace(/bl|\*$/, ''))
+  }))
+  const result = []
+
+  data.forEach( d => {
+    result.push({ Wavelength: d.Wavelength-1, energyDensity: 0})
+    result.push(d)
+    result.push({ Wavelength: d.Wavelength+1, energyDensity: 0})
+  })
+  return result
+}
+
 export {
   csvParse,
+  arrayParse,
 }

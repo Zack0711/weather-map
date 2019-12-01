@@ -4,8 +4,8 @@ import Promise from 'promise-polyfill'
 // To add to window
 if (!window.Promise) window.Promise = Promise
 
-//const apiRoot = 'https://node-site-253814.appspot.com'
-const apiRoot = 'http://localhost:8080'
+const apiRoot = 'https://node-site-253814.appspot.com'
+//const apiRoot = 'http://localhost:8080'
 
 const serverApi = {
   getSpectrumData: {
