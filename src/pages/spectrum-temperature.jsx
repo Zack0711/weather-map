@@ -76,19 +76,6 @@ const getSelectedSpectrum = state => {
   return selected ? data[selected] : {}
 }
 
-/*
-const spectralType = {
-  O: '> 25,000K',
-  B: '10,000-25,000K',
-  A: '7,500-10,000K',
-  F: '6,000-7,500K',
-  G: '5,000-6,000K',
-  K: '3,500-5,000K',
-  M: '< 3,500K',
-  C: '< 3,500K',
-}
-*/
-
 const spectralType = {
   O: { range: [25000, Infinity], text: '> 25,000K' },
   B: { range: [10000, 25000], text: '10,000-25,000K' },

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 import { makeStyles } from '@material-ui/core/styles'
+import Slider from '@material-ui/core/Slider'
 
 import {
   ComposedChart,
@@ -34,17 +35,6 @@ const light = [
  { Wavelength: 3800, energyDensity: 100 },
  { Wavelength: 7400, energyDensity: 100 },
 ]
-
-const dataLimitCheck = (type, data=[]) => {
-  const dataLength = data.length
-  return (
-    type === 'temperature'
-    ? { min: 0, max:  20000}
-    : {
-      min: (data && dataLength > 0) ? data[0].Wavelength : 'dataMin',
-      max: (data && dataLength > 0) ? data[dataLength - 2].Wavelength : 'dataMax',
-    })
-}
 
 const DEFAULT_STATE = {
   spectrum: {
@@ -101,10 +91,17 @@ const Chart = props => {
   const classes = useStyles()
   const [chartData, setChartData] = useState({})
   const [dataList, setDataList] = useState([])
-  const [dataLimit, setDataLimit] = useState(dataLimitCheck(type))
+  const [dataLimit, setDataLimit] = useState({min: 0, max: 20000})
+
+  const [value, setValue] = useState([0, 20000])
+  const handleChange = (event, newValue) => {
+    setValue(newValue)
+  }
 
   useEffect(() => {
     setDataLimit({ min: chartData.min, max: chartData.max})
+    setValue([chartData.min, chartData.max])
+
     const list = Object.keys(chartData).filter( d => d !== 'max' && d !== 'min' )
     setDataList(list.map( d => ({
       wavelength: chartData[d].wavelength,
@@ -122,69 +119,77 @@ const Chart = props => {
   useEffect(() => {
     if(spectrumData.data){
       setChartData({ ...arrangeData(chartData, spectrumData.data, 'spectrum', 'BestFit') })
-      //console.log(chartData)
-      //console.log(spectrumData)      
     }
   }, [spectrumData])
 
   return (
-    <div className={classes.chart}>
-      <ResponsiveContainer width="100%" height={480} className={classes.elementChart}>
-        <ComposedChart data={elementData} >
-          <XAxis 
-            dataKey="Wavelength"
-            type="number"
-            allowDecimals={false}
-            allowDataOverflow={true}
-            domain={[dataLimit.min, dataLimit.max]}
-          />
-          <YAxis 
-            yAxisId="left"
-            type="number"
-            tick={false}
-            domain={[0, 'dataMax']}
-            label={{ value: 'Energy Density', angle: -90}}
-            allowDataOverflow={true}
-          />
-          <Line 
-            yAxisId="left" 
-            type="monotone" 
-            dataKey="energyDensity" 
-            dot={false} 
-            isAnimationActive={false}
-            stroke="#f00"
-          />
-        </ComposedChart>
-      </ResponsiveContainer>
-      <ResponsiveContainer width="100%" height={480}>
-        <ComposedChart data={dataList} >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis 
-            dataKey="wavelength"
-            type="number"
-            allowDecimals={false}
-            allowDataOverflow={true}
-            domain={[dataLimit.min, dataLimit.max]}
-          />
-          <YAxis 
-            yAxisId="left"
-            type="number"
-            tick={false}
-            domain={[0, 'dataMax']}
-            label={{ value: 'Energy Density', angle: -90}}
-            allowDataOverflow={true}
-          />
-          <Line 
-            yAxisId="left" 
-            type="monotone" 
-            dataKey="spectrum" 
-            dot={false} 
-            isAnimationActive={false}
-          />
-          <Tooltip />
-        </ComposedChart>
-      </ResponsiveContainer>
-    </div>
+    <>
+      <div className={classes.chart}>
+        <ResponsiveContainer width="100%" height={480} className={classes.elementChart}>
+          <ComposedChart data={elementData} >
+            <XAxis 
+              dataKey="Wavelength"
+              type="number"
+              allowDecimals={false}
+              allowDataOverflow={true}
+              domain={[value[0], value[1]]}
+            />
+            <YAxis 
+              yAxisId="left"
+              type="number"
+              tick={false}
+              domain={[0, 'dataMax']}
+              label={{ value: 'Energy Density', angle: -90}}
+              allowDataOverflow={true}
+            />
+            <Line 
+              yAxisId="left" 
+              type="monotone" 
+              dataKey="energyDensity" 
+              dot={false} 
+              isAnimationActive={false}
+              stroke="#f00"
+            />
+          </ComposedChart>
+        </ResponsiveContainer>
+        <ResponsiveContainer width="100%" height={480}>
+          <ComposedChart data={dataList} >
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis 
+              dataKey="wavelength"
+              type="number"
+              allowDecimals={false}
+              allowDataOverflow={true}
+              domain={[value[0], value[1]]}
+            />
+            <YAxis 
+              yAxisId="left"
+              type="number"
+              tick={false}
+              domain={[0, 'dataMax']}
+              label={{ value: 'Energy Density', angle: -90}}
+              allowDataOverflow={true}
+            />
+            <Line 
+              yAxisId="left" 
+              type="monotone" 
+              dataKey="spectrum" 
+              dot={false} 
+              isAnimationActive={false}
+            />
+            <Tooltip />
+          </ComposedChart>
+        </ResponsiveContainer>
+      </div>
+      <Slider
+        min={dataLimit.min}
+        max={dataLimit.max}
+        value={value}
+        onChange={handleChange}
+        valueLabelDisplay="auto"
+        aria-labelledby="range-slider"
+      />
+    </>
   )
 }
 
