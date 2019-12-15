@@ -43,7 +43,7 @@ import {
 } from '../actions'
 
 import ChartWrapper from '../containers/chart-wrapper'
-import Chart from '../components/chart/index.jsx'
+import Chart from '../components/chart/composition.jsx'
 import Progress from '../components/progress/index.jsx'
 import DropdownMenu from '../components/dropdown-menu/index.jsx'
 
@@ -107,8 +107,6 @@ const SpectrumComposition= () => {
   const history = useHistory()
   const dispatch = useDispatch()
 
-  const [temperature, setTemperature] = useState(DEFAULT_TEMPERATURE)
-  const [planckData, setPlanckData] = useState(genEnergyDensityDataSet(DEFAULT_TEMPERATURE))
   const [open, setOpen] = useState(false)
   const [selectedElement, setSelectedElement] = useState(element.list[0])
   const [elementData, setElementData] = useState([])
@@ -137,11 +135,6 @@ const SpectrumComposition= () => {
     dispatch(updateViewedSpectrum)
   }, [])
 
-  const handleSliderChange = (e, val) => {
-    setTemperature(val)
-    setPlanckData(genEnergyDensityDataSet(val))
-  }
-
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -150,15 +143,7 @@ const SpectrumComposition= () => {
     setOpen(false);
   };
 
-  const answer = t => {
-    const surfaceTemperature = spectrumData.surfaceTemperature || defaultAnswer.surface_temperature
-    return surfaceTemperature 
-      ? surfaceTemperature.replace('{{t}}', t).split('[br]').map( (d, i) => (<React.Fragment key={i} >{d}<br /></React.Fragment>))
-      : ''
-  }
-
   const handleElementChange = option => {
-//    const newSelectedelement = option.value
     const newElementData = element.data[option.value]
 
     setElementData(

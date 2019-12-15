@@ -60,6 +60,17 @@ const Chart = props => {
       spectrumData && (
         <ResponsiveContainer width="100%" height={480}>
           <ComposedChart>
+            <defs>
+              <linearGradient id="colorUv" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stopColor="#7F007F" stopOpacity={0.8}/>
+                <stop offset="16.67%" stopColor="#0000FF" stopOpacity={0.8}/>
+                <stop offset="33.33%" stopColor="#00FFFF" stopOpacity={0.8}/>
+                <stop offset="50%" stopColor="#00FF00" stopOpacity={0.8}/>
+                <stop offset="66.67%" stopColor="#FFFF00" stopOpacity={0.8}/>
+                <stop offset="83.33%" stopColor="#FF7F00" stopOpacity={0.8}/>
+                <stop offset="100%" stopColor="#FF0000" stopOpacity={0.8}/>
+              </linearGradient>
+            </defs>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis 
               dataKey="Wavelength"
@@ -86,28 +97,14 @@ const Chart = props => {
               domain={[0, 'dataMax']}
               yAxisId="light" 
             />
-            <YAxis 
-              hide={true}
-              yAxisId="element"
-              type="number"
-              allowDataOverflow={true}
-              domain={[0, 'dataMax']}
-            />
-            <Bar 
-              yAxisId="element"
-              dataKey="energyDensity"
-              barSize={1} 
-              fill="#0f0" 
-            />
-            <Line 
-              yAxisId="element" 
+            <Area 
+              yAxisId="light" 
               type="monotone" 
-              data={elementData} 
+              data={light} 
               dataKey="energyDensity" 
-              dot={false} 
-              activeDot={false}
+              stroke="#8884d8" 
+              fill="url(#colorUv)"
               isAnimationActive={false}
-              stroke="#82ca9d"
             />
             <Line 
               yAxisId="left" 
