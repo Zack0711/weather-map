@@ -52,8 +52,6 @@ import { redshiftCalibration } from '../utilities/redshift'
 
 import element from '../element.js'
 
-const DEFAULT_TEMPERATURE = 3600
-
 const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: 1,
@@ -88,16 +86,46 @@ const useStyles = makeStyles(theme => ({
 
 const elementOption = element.list.map( d => ({ label: d, value: d}))
 
-const spectralType = {
-  O: '> 25,000K',
-  B: '10,000-25,000K',
-  A: '7,500-10,000K',
-  F: '6,000-7,500K',
-  G: '5,000-6,000K',
-  K: '3,500-5,000K',
-  M: '< 3,500K',
-  C: '< 3,500K',
+const DEFAULT_STATE = {
+  spectrum: 0,
+  spCount: 0,
+  element: 0,
+  elCount: 0,
 }
+
+const arrangeSPectrumData = (list, key) => {
+  let min = Infinity
+  let max = 0
+  const data = {}
+
+  list.forEach( d => {
+    const wavelength = Math.floor(d.Wavelength)
+    const dataDensity = d[key] || 0
+
+    if(!data[wavelength]) data[wavelength] = { ...DEFAULT_STATE, wavelength: wavelength }
+
+    const count = 
+
+    let {
+      count,
+      density,
+    } = data[wavelength][type]
+
+    data[wavelength]['spectrum'] = {
+      count: count + 1,
+      density: (density * count + dataDensity) / (count + 1)
+    }
+
+    if(min > wavelength) min = wavelength
+    if(max < wavelength) max = wavelength
+
+  })
+
+  data['min'] = min
+  data['max'] = max
+  return data
+}
+
 
 const SpectrumComposition= () => {
   const classes = useStyles()
