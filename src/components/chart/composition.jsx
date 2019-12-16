@@ -54,10 +54,10 @@ const arrangeData = (data, list, type, key) => {
   } = data
 
   list.forEach( d => {
-    const wavelength = Math.floor(d.Wavelength * 10)
-    const dataDensity = d[key]
+    const wavelength = Math.floor(d.Wavelength)
+    const dataDensity = d[key] || 0
 
-    if(!data[wavelength]) data[wavelength] = { ...DEFAULT_STATE, wavelength: wavelength / 10 }
+    if(!data[wavelength]) data[wavelength] = { ...DEFAULT_STATE, wavelength: wavelength }
 
     let {
       count,
@@ -74,9 +74,8 @@ const arrangeData = (data, list, type, key) => {
 
   })
 
-  data['min'] = min / 10
-  data['max'] = max / 10
-
+  data['min'] = min
+  data['max'] = max
   return data
 }
 
@@ -103,12 +102,44 @@ const Chart = props => {
     setValue([chartData.min, chartData.max])
 
     const list = Object.keys(chartData).filter( d => d !== 'max' && d !== 'min' )
+    const dataList = []
+
+    list.forEach( (d, i) => {
+      if(d){
+        const current = chartData[d]
+        const next = chartData[list[i+1]]
+
+        const waveInterval = next ? next.wavelength - current.wavelength : 1
+        const spectrumDensityInterval = next ? next.spectrum.density - current.spectrum.density : 0
+
+        dataList.push({
+          wavelength: current.wavelength,
+          spectrum: current.spectrum.density,
+          element: 0,          
+        })
+
+        if(waveInterval > 1){
+          for(let i = 1; i < waveInterval; i++){
+            dataList.push({
+              wavelength: current.wavelength + i,
+              spectrum: current.spectrum.density + spectrumDensityInterval * i / waveInterval,
+              element: 0,
+            })
+          }
+        }
+      }
+    })
+
+    //console.log(dataList)
+    setDataList(dataList)
+
+    /*
     setDataList(list.map( d => ({
       wavelength: chartData[d].wavelength,
       spectrum: chartData[d].spectrum.density,
       element: chartData[d].element.density,
     })))
-    //console.log(list)
+    */
   }, [chartData])
 
   useEffect(() => {
