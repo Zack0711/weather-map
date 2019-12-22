@@ -16,6 +16,9 @@ import {
   ResponsiveContainer,
 } from 'recharts'
 
+const iOSBoxShadow =
+  '0 3px 1px rgba(0,0,0,0.1),0 4px 8px rgba(0,0,0,0.13),0 0 0 1px rgba(0,0,0,0.02)';
+
 const useStyles = makeStyles(theme => ({
   chart: {
     height: '480px',
@@ -28,56 +31,35 @@ const useStyles = makeStyles(theme => ({
     '& .recharts-cartesian-axis': {
       opacity: 0,
     }
-  }
-}))
-
-const light = [
- { Wavelength: 3800, energyDensity: 100 },
- { Wavelength: 7400, energyDensity: 100 },
-]
-
-const DEFAULT_STATE = {
-  spectrum: {
-    count: 0,
-    density: 0,
   },
-  element: {
-    count: 0,
-    density: 0,
+  sliderRoot:{
+    width: 'calc(100% - 70px)',
+    marginLeft: 70,
+  },
+  thumb: {
+    height: 18,
+    width: 18,
+    backgroundColor: '#fff',
+    boxShadow: iOSBoxShadow,
+    marginTop: -9,
+    marginLeft: -9,
+    '&:focus,&:hover,&$active': {
+      boxShadow: '0 3px 1px rgba(0,0,0,0.1),0 4px 8px rgba(0,0,0,0.3),0 0 0 1px rgba(0,0,0,0.02)',
+      // Reset on touch devices, it doesn't add specificity
+      '@media (hover: none)': {
+        boxShadow: iOSBoxShadow,
+      },
+    },
+  },
+  valueLabel: {
+    left: 'calc(-50% + 11px)',
+    top: -22,
+    '& *': {
+      background: 'transparent',
+      color: '#000',
+    },
   },  
-}
-
-const arrangeData = (data, list, type, key) => {
-  let {
-    min = Infinity,
-    max = 0,
-  } = data
-
-  list.forEach( d => {
-    const wavelength = Math.floor(d.Wavelength)
-    const dataDensity = d[key] || 0
-
-    if(!data[wavelength]) data[wavelength] = { ...DEFAULT_STATE, wavelength: wavelength }
-
-    let {
-      count,
-      density,
-    } = data[wavelength][type]
-
-    data[wavelength]['spectrum'] = {
-      count: count + 1,
-      density: (density * count + dataDensity) / (count + 1)
-    }
-
-    if(min > wavelength) min = wavelength
-    if(max < wavelength) max = wavelength
-
-  })
-
-  data['min'] = min
-  data['max'] = max
-  return data
-}
+}))
 
 const Chart = props => {
   const {
@@ -88,8 +70,8 @@ const Chart = props => {
   } = props;
 
   const classes = useStyles()
-  const [chartData, setChartData] = useState({})
   const [dataList, setDataList] = useState([])
+  const [marks, setMarks] = useState([])
   const [dataLimit, setDataLimit] = useState({min: 0, max: 20000})
 
   const [value, setValue] = useState([0, 20000])
@@ -98,58 +80,25 @@ const Chart = props => {
   }
 
   useEffect(() => {
-    setDataLimit({ min: chartData.min, max: chartData.max})
-    setValue([chartData.min, chartData.max])
-
-    const list = Object.keys(chartData).filter( d => d !== 'max' && d !== 'min' )
-    const dataList = []
-
-    list.forEach( (d, i) => {
-      if(d){
-        const current = chartData[d]
-        const next = chartData[list[i+1]]
-
-        const waveInterval = next ? next.wavelength - current.wavelength : 1
-        const spectrumDensityInterval = next ? next.spectrum.density - current.spectrum.density : 0
-
-        dataList.push({
-          wavelength: current.wavelength,
-          spectrum: current.spectrum.density,
-          element: 0,          
-        })
-
-        if(waveInterval > 1){
-          for(let i = 1; i < waveInterval; i++){
-            dataList.push({
-              wavelength: current.wavelength + i,
-              spectrum: current.spectrum.density + spectrumDensityInterval * i / waveInterval,
-              element: 0,
-            })
-          }
-        }
-      }
-    })
-
-    //console.log(dataList)
-    setDataList(dataList)
-
-    /*
-    setDataList(list.map( d => ({
-      wavelength: chartData[d].wavelength,
-      spectrum: chartData[d].spectrum.density,
-      element: chartData[d].element.density,
-    })))
-    */
-  }, [chartData])
-
-  useEffect(() => {
-    console.log(elementData)
-    //setChartData({ ...arrangeData(chartData, elementData, 'element', 'energyDensity') })
-  }, [elementData])
-
-  useEffect(() => {
     if(spectrumData.data){
-      setChartData({ ...arrangeData(chartData, spectrumData.data, 'spectrum', 'BestFit') })
+      const min = spectrumData.data[0].Wavelength
+      const max = spectrumData.data[spectrumData.data.length - 2].Wavelength
+
+      const interval = (max - min)/5
+      const marks = []
+
+      for(let i = 0; i <= 5; i++){
+        const value = i < 5 ? min + interval * i : max
+        marks.push({
+          value,
+          label: value.toFixed(3),          
+        })          
+      }
+
+      setDataLimit({ min, max})
+      setValue([min, max])
+      setDataList(spectrumData.data)
+      setMarks(marks)
     }
   }, [spectrumData])
 
@@ -187,10 +136,11 @@ const Chart = props => {
           <ComposedChart data={dataList} >
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis 
-              dataKey="wavelength"
+              dataKey="Wavelength"
               type="number"
               allowDecimals={false}
               allowDataOverflow={true}
+              tick={false}
               domain={[value[0], value[1]]}
             />
             <YAxis 
@@ -204,7 +154,7 @@ const Chart = props => {
             <Line 
               yAxisId="left" 
               type="monotone" 
-              dataKey="spectrum" 
+              dataKey="BestFit" 
               dot={false} 
               isAnimationActive={false}
             />
@@ -217,7 +167,13 @@ const Chart = props => {
         max={dataLimit.max}
         value={value}
         onChange={handleChange}
-        valueLabelDisplay="auto"
+        classes={{
+          root: classes.sliderRoot,
+          thumb: classes.thumb, // class name, e.g. `classes-nesting-root-x`
+          valueLabel: classes.valueLabel, // class name, e.g. `classes-nesting-label-x`
+        }}
+        marks={marks}
+        valueLabelDisplay="on"
         aria-labelledby="range-slider"
       />
     </>

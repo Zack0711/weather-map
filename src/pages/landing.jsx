@@ -196,6 +196,25 @@ const Landing = () => {
                 </CardActionArea>
               </Card>
             </Grid>
+            <Grid item xs={12} sm={6} md={4}>
+              <Card className={classes.card}>
+                <CardActionArea onClick={() => {history.push('/spectrum-redshift')}}>
+                  <CardMedia
+                    className={classes.cardMedia}
+                    image="https://www.physicsforums.com/attachments/thedynamicdu-png.190629/"
+                    title="Image title"
+                  />
+                  <CardContent className={classes.cardContent}>
+                    <Typography gutterBottom variant="h5" component="h2">
+                      恆星的逕向速度
+                    </Typography>
+                    <Typography>
+                      找出恆星的波長位移量，算出逕向速度。
+                    </Typography>
+                  </CardContent>
+                </CardActionArea>
+              </Card>
+            </Grid>
           </Grid>
         </Container>
       </main>

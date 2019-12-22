@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
+import union from 'lodash/union'
 
 import { makeStyles } from '@material-ui/core/styles'
 
@@ -21,6 +22,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox'
+import TextField from '@material-ui/core/TextField'
 
 import Slider from '@material-ui/core/Slider'
 import Tooltip from '@material-ui/core/Tooltip'
@@ -43,14 +45,25 @@ import {
 } from '../actions'
 
 import ChartWrapper from '../containers/chart-wrapper'
-import Chart from '../components/chart/composition.jsx'
+import Chart from '../components/chart/redshift.jsx'
 import Progress from '../components/progress/index.jsx'
 import DropdownMenu from '../components/dropdown-menu/index.jsx'
 
-import { genEnergyDensityDataSet } from '../utilities/formula'
-import { redshiftCalibration } from '../utilities/redshift'
+import { elementMeasurement } from '../element'
+import { redshiftCalibration, airToVac } from '../utilities/redshift'
 
-import { element } from '../element.js'
+const restElement = {
+  list: [],
+  data: {},
+}
+
+elementMeasurement.list.forEach( d => {
+  restElement.list = union(restElement.list, elementMeasurement.data[d])
+  elementMeasurement.data[d].forEach( wave => {
+    const vacWave = Math.floor(airToVac(wave) * 10)/10
+    restElement.data[`${vacWave}`] = d
+  })
+})
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -68,7 +81,11 @@ const useStyles = makeStyles(theme => ({
     paddingTop: theme.spacing(4),
     paddingBottom: theme.spacing(4),
     paddingLeft: theme.spacing(2),
-    paddingRight: theme.spacing(4),
+    paddingRight: theme.spacing(12),
+  },
+  inputRow: {
+    display: 'flex',
+    alignItems: 'center',
   },
   button: {
     margin: theme.spacing(1),
@@ -81,53 +98,13 @@ const useStyles = makeStyles(theme => ({
   },
   divider: {
     margin: '8px 0',
-  }
+  },
+  textField: {
+    margin: '0 4px',
+  },  
 }))
 
-const elementOption = element.list.map( d => ({ label: d, value: d}))
-
-const DEFAULT_STATE = {
-  spectrum: 0,
-  spCount: 0,
-  element: 0,
-  elCount: 0,
-}
-
-const arrangeSPectrumData = (list, key) => {
-  let min = Infinity
-  let max = 0
-  const data = {}
-
-  list.forEach( d => {
-    const wavelength = Math.floor(d.Wavelength)
-    const dataDensity = d[key] || 0
-
-    if(!data[wavelength]) data[wavelength] = { ...DEFAULT_STATE, wavelength: wavelength }
-
-    //const count = 
-
-    let {
-      count,
-      density,
-    } = data[wavelength][type]
-
-    data[wavelength]['spectrum'] = {
-      count: count + 1,
-      density: (density * count + dataDensity) / (count + 1)
-    }
-
-    if(min > wavelength) min = wavelength
-    if(max < wavelength) max = wavelength
-
-  })
-
-  data['min'] = min
-  data['max'] = max
-  return data
-}
-
-
-const SpectrumComposition= () => {
+const SpectrumRedshift= () => {
   const classes = useStyles()
   const spectrumData = useSelector(getViewed)
   const defaultAnswer = useSelector(getDefaultAnswer) 
@@ -136,32 +113,93 @@ const SpectrumComposition= () => {
   const dispatch = useDispatch()
 
   const [open, setOpen] = useState(false)
-  const [selectedElement, setSelectedElement] = useState(element.list[0])
-  const [elementData, setElementData] = useState([])
-  const [redshift, setRedshift] = useState(0)
-  const [elementList, setElementList] = useState([])
-
-  const elementComposition = [ 'H', 'O_I', 'O_II', 'He' ]
+  const [inputWave, setInputWave] = useState({ rest: '', spectrum: '' })
+  const [chartData, setChartData] = useState({ list: [], elements: [], maxY: 0, limitX: [0, 20000] })
+  const [elementData, setElementData] = useState({ bar: [], option: { list: [], data: {}}})
+  const [radialVelocity, setRadialVelocity] = useState(0)
 
   const isFetching = useSelector(getIsFetching)
 
   useEffect(() => {
-    if(spectrumData.redshift){
+    dispatch(updateViewedSpectrum)
+  }, [])
+
+  useEffect(() => {
+    if(spectrumData.data){
       const redshift = Number(spectrumData.redshift.split(' ')[0])
-      const selectedElementData = element.data[selectedElement]
-      setElementData(
-        selectedElementData.map(d => ({
-          ...d,
-          Wavelength: redshiftCalibration(d.Wavelength, redshift)
-        }))
-      )
-      setRedshift(redshift)
+      const newChartData = { list: [], elements: [] }
+
+      let maxY = 0
+      let limitX = [Infinity, -Infinity]
+
+      const maredElement = {}
+      const elementOptions = {
+        list: [],
+        data: {},
+      }
+
+      spectrumData.data.forEach( d => {
+        const wavelength = d.Wavelength
+        if(wavelength){
+          const restWave = Math.floor( wavelength / ( 1 + redshift) * 10 ) / 10
+          let element = restElement.data[restWave] || restElement.data[restWave + 0.1] || restElement.data[restWave - 0.1] || null
+
+
+          maxY = d.BestFit > maxY ? d.BestFit : maxY
+          limitX[0] = wavelength < limitX[0] ? wavelength : limitX[0]
+          limitX[1] = wavelength > limitX[1] ? wavelength : limitX[1]
+
+          if(element){
+            d.element = element
+            if(!maredElement[element]) maredElement[element] = []
+
+            maredElement[element].push(wavelength)
+            newChartData.elements.push(d)
+            if(!elementOptions.data[element]){
+              elementOptions.list.push(element)
+              elementOptions.data[element] = elementMeasurement.data[element]
+            }
+          }
+          newChartData.list.push(d)
+        }
+      })
+
+      elementOptions.list.sort()
+
+      //const selected = elementOptions.list[0]
+      const elementBarData = []
+
+      elementOptions.list.forEach( d => {
+        elementOptions.data[d].forEach( (wave, i) => {
+          elementBarData.push({
+            wavelength: wave,
+            label: `${d}-${wave}-${i}`,
+            density: 100,            
+          })
+        })
+      })
+
+      setElementData({ bar: elementBarData, option: elementOptions, marked: maredElement })
+      setChartData({ ...newChartData, limitX, maxY: maxY*1.1})
     }
   }, [spectrumData])
 
   useEffect(() => {
-    dispatch(updateViewedSpectrum)
-  }, [])
+    const {
+      rest,
+      spectrum,
+    } = inputWave
+
+    let radialV = 0
+
+    if(rest && spectrum){
+      const restWave = airToVac(rest)
+      radialV = (spectrum - restWave) / restWave
+    }
+
+    setRadialVelocity(radialV)
+
+  }, [inputWave])
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -171,29 +209,9 @@ const SpectrumComposition= () => {
     setOpen(false);
   };
 
-  const handleElementChange = option => {
-    const newElementData = element.data[option.value]
-
-    setElementData(
-      newElementData.map(d => ({
-        ...d,
-        Wavelength: redshiftCalibration(d.Wavelength, redshift)
-      }))
-    )
-    setSelectedElement(option.value)
-  }
-
-  const handleElementSelect = val => () => {
-    const eleIndex = elementList.indexOf(val)
-    if(eleIndex > -1){
-      setElementList(elementList.filter(d => d !== val))
-    }else{
-      setElementList([...elementList, val])      
-    }
-  }
-
-  const handleElementUnselect = val => () => {
-    setElementList(elementList.filter(d => d !== val))    
+  const handleInputChange = key => e => {
+    console.log(e.target.value)
+    setInputWave({...inputWave, [key]: e.target.value})
   }
 
   return(
@@ -213,7 +231,7 @@ const SpectrumComposition= () => {
             <HomeIcon />
           </IconButton>
           <Typography variant="h6" color="inherit">
-            恆星的成分組成
+            恆星的逕向速度
             {
               spectrumData.id && `(ID: ${spectrumData.id})`
             }
@@ -225,67 +243,41 @@ const SpectrumComposition= () => {
           <Paper className={classes.paper}>
             <ChartWrapper>
               <Chart
-                spectrumData={spectrumData}
-                type="composition"
+                chartData = {chartData}
                 elementData={elementData}
               />
             </ChartWrapper>
           </Paper>
-          {
-            elementList.length > 0 && (
-              <Grid
-                container
-                direction="row"
-                justify="center"
-                alignItems="center"
-              >
-                已選擇元素：
-                {
-                  elementList.map(ele => <Chip
-                    color="primary"
-                    variant="outlined"
-                    onDelete={handleElementUnselect(ele)}
-                    classes={{ root: classes.chip }}
-                    key={ele}
-                    label={ele}
-                  />)
-                }
-              </Grid>
-            )
-          }
           <Grid
             container
             direction="row"
             justify="center"
             alignItems="center"
           >
-            <Typography align="left" color="textSecondary">
-              比對元素圖譜，找出該星體組成成分
-            </Typography>
-            <DropdownMenu
-              list={elementOption}
-              label={selectedElement}
-              onMenuClick={handleElementChange}
-              buttonVariant="outlined"
-            />
-            <Typography align="left" color="textSecondary">
-               選擇此元素
-            </Typography>
-            <FormControlLabel
-              classes={{
-                root: classes.checkForm
-              }}
-              control={
-                <Checkbox
-                  checked={elementList.indexOf(selectedElement) > -1}
-                  onChange={handleElementSelect(selectedElement)}
-                  value="checkedB"
-                  color="primary"
-                />
-              }
-            />
+            <div className={classes.inputRow}>
+              輸入靜止時波長:
+              <TextField
+                placeholder="Rest Wavelength"
+                className={classes.textField}
+                onChange={handleInputChange('rest')}
+                value={inputWave.rest}
+                margin="none"
+              />
+            </div>
+            <div className={classes.inputRow}>
+              輸入圖譜上波長:
+              <TextField
+                placeholder="Spectrum Wavelength"
+                className={classes.textField}
+                onChange={handleInputChange('spectrum')}
+                value={inputWave.spectrum}
+                margin="none"
+              />
+            </div>
+            <div>
+              逕向速度(z): {radialVelocity}
+            </div>
             <Button 
-              disabled={elementList.length === 0}
               variant="contained" 
               color="primary" 
               className={classes.button} 
@@ -308,29 +300,12 @@ const SpectrumComposition= () => {
             <DialogContent>
               <DialogContentText>
                 <Typography align="left" color="textSecondary" >
-                  恆星的成分為：
+                  恆星的逕向速度(z)為：{ spectrumData.redshift }
                 </Typography>
-                {
-                  elementComposition.map(ele => <Chip
-                    color="primary"
-                    classes={{ root: classes.chip }}
-                    key={ele}
-                    label={ele}
-                  />)
-                }
                 <Divider classes={{ root: classes.divider }}/>
                 <Typography align="left" color="textSecondary" >
-                  你的答案：
+                  你的答案：{radialVelocity}
                 </Typography>
-                {
-                  elementList.map(ele => <Chip
-                    color="primary"
-                    variant="outlined"
-                    classes={{ root: classes.chip }}
-                    key={ele}
-                    label={ele}
-                  />)
-                }
               </DialogContentText>
             </DialogContent>
             <DialogActions>
@@ -345,4 +320,4 @@ const SpectrumComposition= () => {
   )
 }
 
-export default SpectrumComposition
+export default SpectrumRedshift
