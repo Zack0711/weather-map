@@ -122,6 +122,11 @@ const SpectrumRedshift= () => {
 
   useEffect(() => {
     dispatch(updateViewedSpectrum)
+
+    return () => {
+      setElementData({ bar: [], option: { list: [], data: {}}})
+      setChartData({ list: [], elements: [], maxY: 0, limitX: [0, 20000] })
+    }
   }, [])
 
   useEffect(() => {
@@ -210,7 +215,6 @@ const SpectrumRedshift= () => {
   };
 
   const handleInputChange = key => e => {
-    console.log(e.target.value)
     setInputWave({...inputWave, [key]: e.target.value})
   }
 

@@ -191,7 +191,6 @@ const Chart = props => {
     min = Math.floor(min - 100) < dataLimit.min ? dataLimit.min : Math.floor(min - 100)
     max = Math.floor(max + 100) > dataLimit.max ? dataLimit.max : Math.floor(max + 100)
 
-    console.log(min, max)
     setValue([min, max])
     setElement(ele)
   }
