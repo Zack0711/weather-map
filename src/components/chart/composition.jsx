@@ -16,6 +16,8 @@ import {
   ResponsiveContainer,
 } from 'recharts'
 
+import DotMarkDialog from '../dot-mark-dialog/index.jsx'
+
 const iOSBoxShadow =
   '0 3px 1px rgba(0,0,0,0.1),0 4px 8px rgba(0,0,0,0.13),0 0 0 1px rgba(0,0,0,0.02)';
 
@@ -61,6 +63,8 @@ const useStyles = makeStyles(theme => ({
   },  
 }))
 
+let activePayload = null
+
 const Chart = props => {
   const {
     type,
@@ -77,6 +81,23 @@ const Chart = props => {
   const [value, setValue] = useState([0, 20000])
   const handleChange = (event, newValue) => {
     setValue(newValue)
+  }
+
+  const [open, setOpen] = useState(false)
+  const handleChartClick = () => {
+    //const newDotMarks = union(dotMarks, [activePayload])
+    setOpen(true);
+    //setDotMarks(newDotMarks)
+    console.log('handleChartClick', activePayload)
+  }
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleFormatter = (value, name, props) => {
+    activePayload = props.payload
+    return [value, name]
   }
 
   useEffect(() => {
@@ -106,7 +127,7 @@ const Chart = props => {
     <>
       <div className={classes.chart}>
         <ResponsiveContainer width="100%" height={480} className={classes.elementChart}>
-          <ComposedChart data={elementData} >
+          <ComposedChart data={elementData}>
             <XAxis 
               dataKey="Wavelength"
               type="number"
@@ -133,7 +154,7 @@ const Chart = props => {
           </ComposedChart>
         </ResponsiveContainer>
         <ResponsiveContainer width="100%" height={480}>
-          <ComposedChart data={dataList} >
+          <ComposedChart data={dataList} onClick={handleChartClick}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis 
               dataKey="Wavelength"
@@ -158,7 +179,7 @@ const Chart = props => {
               dot={false} 
               isAnimationActive={false}
             />
-            <Tooltip />
+            <Tooltip formatter={handleFormatter} />
           </ComposedChart>
         </ResponsiveContainer>
       </div>
@@ -175,6 +196,10 @@ const Chart = props => {
         marks={marks}
         valueLabelDisplay="on"
         aria-labelledby="range-slider"
+      />
+      <DotMarkDialog
+        open={open}
+        onClose={handleClose}
       />
     </>
   )

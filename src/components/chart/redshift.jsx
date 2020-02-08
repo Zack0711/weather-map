@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles'
 import Slider from '@material-ui/core/Slider'
 import Chip from '@material-ui/core/Chip'
+import Button from '@material-ui/core/Button'
 
 import {
   ComposedChart,
@@ -120,32 +121,6 @@ const Chart = props => {
     setValue(newValue)
   }
 
-  useEffect(() => {
-    const min = chartData.limitX[0]
-    const max = chartData.limitX[1]
-
-    const interval = (max - min)/5
-    const marks = []
-
-    for(let i = 0; i <= 5; i++){
-      const value = i < 5 ? min + interval * i : max
-      marks.push({
-        value,
-        label: value.toFixed(3),          
-      })          
-    }
-
-    setDataLimit({ min, max})
-    setValue([min, max])
-    setMarks(marks)
-
-  }, [chartData])
-
-  useEffect(() => {
-    console.log(elementData)
-    setElement(elementData.option.list[0])
-  }, [elementData])
-
   const renderLabel = props => {
    const {
       x, y, width, height, value, index
@@ -194,6 +169,31 @@ const Chart = props => {
     setValue([min, max])
     setElement(ele)
   }
+
+  useEffect(() => {
+    const min = chartData.limitX[0]
+    const max = chartData.limitX[1]
+
+    const interval = (max - min)/5
+    const marks = []
+
+    for(let i = 0; i <= 5; i++){
+      const value = i < 5 ? min + interval * i : max
+      marks.push({
+        value,
+        label: value.toFixed(3),          
+      })          
+    }
+
+    setDataLimit({ min, max})
+    setValue([min, max])
+    setMarks(marks)
+
+  }, [chartData])
+
+  useEffect(() => {
+    setElement(elementData.option.list[0])
+  }, [elementData])
 
   return (
     <>

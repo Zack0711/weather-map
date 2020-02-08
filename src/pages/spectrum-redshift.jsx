@@ -292,34 +292,28 @@ const SpectrumRedshift= () => {
           </Grid>
         </Container>
       </main>
-      {
-        spectrumData.subclass && (
-          <Dialog
-            open={open}
-            onClose={handleClose}
-            aria-labelledby="responsive-dialog-title"
-          >
-            <DialogTitle id="customized-dialog-title" onClose={handleClose}>
-            </DialogTitle>
-            <DialogContent>
-              <DialogContentText>
-                <Typography align="left" color="textSecondary" >
-                  恆星的逕向速度(z)為：{ spectrumData.redshift }
-                </Typography>
-                <Divider classes={{ root: classes.divider }}/>
-                <Typography align="left" color="textSecondary" >
-                  你的答案：{radialVelocity}
-                </Typography>
-              </DialogContentText>
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={handleClose} color="primary">
-                關閉
-              </Button>
-            </DialogActions>
-          </Dialog>
-        )
-      }
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="responsive-dialog-title"
+      >
+        <DialogContent>
+          <DialogContentText>
+            <Typography align="left" color="textSecondary" >
+              恆星的逕向速度(z)為：{ spectrumData.redshift }
+            </Typography>
+            <Divider classes={{ root: classes.divider }}/>
+            <Typography align="left" color="textSecondary" >
+              你的答案：{radialVelocity}
+            </Typography>
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} color="primary">
+            關閉
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   )
 }
