@@ -286,18 +286,15 @@ const Chart = props => {
             <Tooltip formatter={handleFormatter} />
           </ComposedChart>
         </ResponsiveContainer>
-        {
-          markDots.list.length > 0 && (
-            <Button 
-              className={classes.clearAllDotsBtn}
-              onClick={clearAllMarkDots} 
-              variant="contained" 
-              color="primary"
-            >
-              清除所有標記的點
-            </Button>
-          )
-        }
+        <Button 
+          className={classes.clearAllDotsBtn}
+          onClick={clearAllMarkDots}
+          disabled={markDots.list.length === 0}
+          variant="contained" 
+          color="primary"
+        >
+          清除標記
+        </Button>
       </div>
       <Slider
         min={dataLimit.min}
