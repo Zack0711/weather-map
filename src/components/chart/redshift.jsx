@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles'
 import Slider from '@material-ui/core/Slider'
 import Chip from '@material-ui/core/Chip'
-import Button from '@material-ui/core/Button'
 
 import {
   ComposedChart,

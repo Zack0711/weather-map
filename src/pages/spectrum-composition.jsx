@@ -228,6 +228,7 @@ const SpectrumComposition= () => {
                 spectrumData={spectrumData}
                 type="composition"
                 elementData={elementData}
+                selectedElement={selectedElement}
               />
             </ChartWrapper>
           </Paper>
