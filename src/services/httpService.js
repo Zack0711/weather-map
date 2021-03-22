@@ -4,7 +4,7 @@ import Promise from 'promise-polyfill'
 // To add to window
 if (!window.Promise) window.Promise = Promise
 
-const apiRoot = 'https://node-site-253814.appspot.com/'
+const apiRoot = 'https://node-site-253814.appspot.com'
 //const apiRoot = 'http://localhost:8080'
 
 const serverApi = {
@@ -56,13 +56,22 @@ const serverApi = {
       mode: 'cors',
     },
   },
-  getAllPost: {
+  getDefaultAnswer: {
     method: 'GET',
-    url: config => `http://140.122.146.39/wordpress/index.php/wp-json/wp/v2/posts`,
+    url: config => `${apiRoot}/default-answer/`,
     headers: {
       'Content-Type': 'application/json',
+      mode: 'cors',
     },
   },
+  updateDefaultAnswer: {
+    method: 'PUT',
+    url: config => `${apiRoot}/default-answer/`,
+    headers: {
+      'Content-Type': 'application/json',
+      mode: 'cors',
+    },
+  }
 }
 
 /* eslint class-methods-use-this: ["error", { "exceptMethods": ["sendRequest"] }] */

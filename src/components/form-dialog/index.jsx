@@ -18,19 +18,24 @@ const FormDialog = props => {
     onConfirm,
     disabled,
     isFetching,
+    className,
   } = props
 
   return (
-    <Dialog open={open} aria-labelledby="form-dialog-title">
+    <Dialog open={open} aria-labelledby="form-dialog-title" >
       <DialogTitle id="form-dialog-title">{title}</DialogTitle>
       <DialogContent style={{position: 'relative', minHeight: '60px', minWidth: '240px'}}>
         { isFetching && <Progress/> }
         { children }
       </DialogContent>
       <DialogActions>
-        <Button onClick={onConfirm} variant="contained" color="primary" disabled={isFetching}>
-          確定
-        </Button>
+        {
+          onConfirm && (
+            <Button onClick={onConfirm} variant="contained" color="primary" disabled={isFetching}>
+              確定
+            </Button>
+          )
+        }
         <Button onClick={onClose} color="primary" disabled={isFetching}>
           取消
         </Button>

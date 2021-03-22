@@ -29,6 +29,7 @@ import {
 import {
   getIsFetching,
   getSelected,
+  getDefaultAnswer,
 } from '../../selectors/spectrum'
 
 import Progress from '../progress/index.jsx'
@@ -86,12 +87,14 @@ const EditPage = () => {
   let { id } = useParams()
   const spectrumData = useSelector(getSelected)
   const isFetching = useSelector(getIsFetching)
+  const defaultAnswer = useSelector(getDefaultAnswer) 
 
   const [values, setValues] = React.useState({
     subclass: '',
     surfaceTemperature: '',
     elementComposition: '',
     redshift: '',
+    redshiftText: '',
   })
 
   useEffect(() => {
@@ -104,13 +107,15 @@ const EditPage = () => {
       surfaceTemperature,
       elementComposition,
       redshift,
+      redshiftText,
     } = spectrumData
 
     setValues({
       subclass,
       surfaceTemperature,
       elementComposition,
-      redshift,      
+      redshift,
+      redshiftText,      
     })
 
   }, [spectrumData])
@@ -157,8 +162,14 @@ const EditPage = () => {
             onChange={handleChange('subclass')}
             margin="normal"
           />
+          <TextField
+            label="Redshift"
+            value={values.redshift}
+            className={classes.textField}
+            onChange={handleChange('redshift')}
+            margin="normal"
+          />
           <Button variant="contained" color="default" onClick={openReference} className={classes.referenceButton}>
-            原始資料網址
             <LaunchIcon />
           </Button>
         </div>
@@ -174,6 +185,7 @@ const EditPage = () => {
           <Grid item sm={4}>
             <TextField
               label="表面溫度"
+              placeholder={defaultAnswer.surface_temperature}
               multiline
               value={values.surfaceTemperature}
               onChange={handleChange('surfaceTemperature')}
@@ -186,6 +198,7 @@ const EditPage = () => {
             <TextField
               label="成分組成"
               multiline
+              placeholder={defaultAnswer.element_composition}
               value={values.elementComposition}
               onChange={handleChange('elementComposition')}
               rows="4"
@@ -195,10 +208,11 @@ const EditPage = () => {
           </Grid>
           <Grid item sm={4}>
             <TextField
-              label="紅位移"
+              label="紅位移說明"
+              placeholder={defaultAnswer.redshift}
               multiline
-              value={values.redshift}
-              onChange={handleChange('redshift')}
+              value={values.redshiftText}
+              onChange={handleChange('redshiftText')}
               rows="4"
               className={classes.textFieldWide}
               margin="normal"

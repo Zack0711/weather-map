@@ -5,6 +5,8 @@ import { handleActions } from 'redux-actions';
 const initState = {
   list: [],
   selected: {},
+  viewedID: null,
+  viewed: {},
   isFetching: false,
   addDialogOpen: false,
   addSpectrumResult: {
@@ -12,6 +14,7 @@ const initState = {
     success: false,
     message: '',
   },
+  defaultAnswer: {},
 }
 
 const spectrumReducer = handleActions({
@@ -37,6 +40,12 @@ const spectrumReducer = handleActions({
       list: payload.list,
     })    
   },
+  UPDATE_DEFAULT_ANSWER: (state, payload) => {
+    return({
+      ...state,
+      defaultAnswer: payload.defaultAnswer,
+    })    
+  },
   UPDATE_EDITED_SPECTRUM: (state, payload) => {
     return({
       ...state,
@@ -52,6 +61,20 @@ const spectrumReducer = handleActions({
         ...state.addSpectrumResult,
         ...payload.result,
       }
+    })
+  },
+  UPDATE_VIEWED_SPECTRUM: (state, payload) => {
+    return({
+      ...state,
+      viewed: {
+        ...payload.data
+      }
+    })
+  },
+  UPDATE_VIEWED_ID: (state, payload) => {
+    return({
+      ...state,
+      viewedID: payload.viewedID,
     })
   },
 }, initState)

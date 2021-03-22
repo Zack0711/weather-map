@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 
 import { makeStyles } from '@material-ui/core/styles'
 
@@ -26,8 +26,19 @@ import {
   useHistory,
 } from "react-router-dom"
 
+import {
+  getViewed,
+  getIsFetching,
+  getDefaultAnswer,
+} from '../selectors/spectrum'
+
+import {
+  updateViewedSpectrum,
+} from '../actions'
+
 import ChartWrapper from '../containers/chart-wrapper'
 import Chart from '../containers/chart'
+import Progress from '../components/progress/index.jsx'
 
 import { genEnergyDensityDataSet } from '../utilities/formula'
 
@@ -66,25 +77,38 @@ const getSelectedSpectrum = state => {
 }
 
 const spectralType = {
-  O: '> 25,000K',
-  B: '10,000-25,000K',
-  A: '7,500-10,000K',
-  F: '6,000-7,500K',
-  G: '5,000-6,000K',
-  K: '3,500-5,000K',
-  M: '< 3,500K',
-  C: '< 3,500K',
+  O: { range: [25000, Infinity], text: '> 25,000K' },
+  B: { range: [10000, 25000], text: '10,000-25,000K' },
+  A: { range: [7500, 10000], text: '7,500-10,000K' },
+  F: { range: [6000, 7500], text: '6,000-7,500K' },
+  G: { range: [5000, 6000], text: '5,000-6,000K' },
+  K: { range: [3500, 5000], text: '3,500-5,000K' },
+  M: { range: [0, 3500], text: '< 3,500K' },
+  C: { range: [0, 3500], text: '< 3,500K' },
 }
 
-const GalaxySpectrum = () => {
+const inRange = (val, range) => {
+  if(val >= range[0] && val <= range[1]) return '太厲害了！你的判斷真準～'
+  if(val >= range[0] - 500 && val <= range[1] + 500) return '很接近了喔！'
+  return '這樣的黑體輻射曲線與星體光譜是不是比較接近？！畫出解答溫度中間值的黑體輻射曲線'
+}
+
+const SpectrumTemperature = () => {
   const classes = useStyles()
-  const spectrumData = useSelector(getSelectedSpectrum)
+  const spectrumData = useSelector(getViewed)
+  const defaultAnswer = useSelector(getDefaultAnswer) 
 
   const history = useHistory()
+  const dispatch = useDispatch()
 
-  const [temperature, setTemperature] = React.useState(DEFAULT_TEMPERATURE)
-  const [planckData, setPlanckData] = React.useState(genEnergyDensityDataSet(DEFAULT_TEMPERATURE))
-  const [open, setOpen] = React.useState(false)
+  const [temperature, setTemperature] = useState(DEFAULT_TEMPERATURE)
+  const [planckData, setPlanckData] = useState(genEnergyDensityDataSet(DEFAULT_TEMPERATURE))
+  const [open, setOpen] = useState(false)
+
+  const isFetching = useSelector(getIsFetching)
+  useEffect(() => {
+    dispatch(updateViewedSpectrum)
+  }, [])
 
   const handleSliderChange = (e, val) => {
     setTemperature(val)
@@ -99,8 +123,24 @@ const GalaxySpectrum = () => {
     setOpen(false);
   };
 
+  const answer = t => {
+    const surfaceTemperature = spectrumData.surfaceTemperature || defaultAnswer.surface_temperature
+    return (
+      <React.Fragment>
+        表面溫度為：{t.text}<br />
+        { inRange(temperature, t.range) }
+      </React.Fragment>
+    )
+    /*
+    return surfaceTemperature 
+      ? surfaceTemperature.replace('{{t}}', t.join('-')).split('[br]').map( (d, i) => (<React.Fragment >{d}<br /></React.Fragment>))
+      : ''
+    */
+  }
+
   return(
     <>
+      { isFetching && <Progress/> }    
       <AppBar position="static" color="default">
         <Toolbar variant="dense">
           <IconButton 
@@ -116,6 +156,9 @@ const GalaxySpectrum = () => {
           </IconButton>
           <Typography variant="h6" color="inherit">
             恆星的等效溫度
+            {
+              spectrumData.id && `(ID: ${spectrumData.id})`
+            }
           </Typography>
         </Toolbar>
       </AppBar>
@@ -123,14 +166,14 @@ const GalaxySpectrum = () => {
         <Container maxWidth="lg" className={classes.container}>
           <Paper className={classes.paper}>
             <ChartWrapper>
-              <Chart planckData={planckData} />
+              <Chart planckData={planckData} type="temperature" />
             </ChartWrapper>
           </Paper>
           <Typography variant="h6" align="center" gutterBottom>絕對溫度: {temperature}</Typography>
           <Slider
             defaultValue={DEFAULT_TEMPERATURE}
-            step={10}
-            max={8000}
+            step={50}
+            max={12000}
             onChange={handleSliderChange}
           />
           <Grid
@@ -149,19 +192,18 @@ const GalaxySpectrum = () => {
         </Container>
       </main>
       {
-        spectrumData.subClass && (
+        spectrumData.subclass && (
           <Dialog
             open={open}
             onClose={handleClose}
             aria-labelledby="responsive-dialog-title"
           >
             <DialogTitle id="customized-dialog-title" onClose={handleClose}>
-              恆星的光譜分類為：{spectrumData.subClass}
+              恆星的光譜分類為：{spectrumData.subclass}
             </DialogTitle>
             <DialogContent>
               <DialogContentText>
-                表面溫度為：{spectralType[spectrumData.subClass[0]]}<br/>
-                Each spectral type is divided into 10 subclasses, A0, A1, A2, ...A9 etc. The spectral types and sub-classes represent a temperature sequence, from hotter (O stars) to cooler (M stars), and from hotter (subclass 0) to cooler (subclass 9).
+                {answer(spectralType[spectrumData.subclass[0]])}
               </DialogContentText>
             </DialogContent>
             <DialogActions>
@@ -176,4 +218,4 @@ const GalaxySpectrum = () => {
   )
 }
 
-export default GalaxySpectrum
+export default SpectrumTemperature
