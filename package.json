@@ -9,7 +9,7 @@
   },
   "author": "Zack Lai",
   "browserslist": [
-    "> 0.25%",
+    "> 0.3%",
     "IE 11"
   ],
   "devDependencies": {
